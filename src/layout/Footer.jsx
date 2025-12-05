@@ -1,5 +1,4 @@
-import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
-import { SiX } from "react-icons/si";   // ← Official X logo (2025)
+import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from "react-icons/fi";
 
 export default function Footer() {
   return (
@@ -11,14 +10,14 @@ export default function Footer() {
           <div className="flex flex-col items-center md:items-start">
             <div className="flex flex-col items-start gap-3 mb-4">
               <img
-                src="/src/assets/bookC.webp"
+                src="/src/assets/bookC.webp" // have to change logo later
                 alt="BookCourier"
-                className="h-12 w-12 rounded-lg object-contain bg-white p-1 shadow-md"
+                className="h-12 w-12 rounded-lg object-contain bg-white p-1"
               />
               <span className="text-2xl font-bold">BookCourier</span>
             </div>
-            <p className="text-sm opacity-80 max-w-xs text-center md:text-left">
-              Your trusted library-to-home book delivery service across Bangladesh.
+            <p className="text-sm text-center md:text-left opacity-80 max-w-xs">
+              Your trusted library-to-home book delivery service across the city.
             </p>
           </div>
 
@@ -46,14 +45,14 @@ export default function Footer() {
           {/* Social Links */}
           <div>
             <h3 className="font-semibold text-lg mb-4">Follow Us</h3>
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-ghost btn-circle hover:bg-blue-600 hover:text-white transition"
               >
-                <FaFacebookF size={22} />
+                <FiFacebook className="w-6 h-6" />
               </a>
               <a
                 href="https://x.com"
@@ -61,7 +60,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="btn btn-ghost btn-circle hover:bg-black hover:text-white transition"
               >
-                <SiX size={20} />
+                <FiTwitter className="w-6 h-6" />
               </a>
               <a
                 href="https://instagram.com"
@@ -69,7 +68,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="btn btn-ghost btn-circle hover:bg-pink-600 hover:text-white transition"
               >
-                <FaInstagram size={22} />
+                <FiInstagram className="w-6 h-6" />
               </a>
               <a
                 href="https://linkedin.com"
@@ -77,12 +76,12 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="btn btn-ghost btn-circle hover:bg-blue-700 hover:text-white transition"
               >
-                <FaLinkedinIn size={22} />
+                <FiLinkedin className="w-6 h-6" />
               </a>
             </div>
           </div>
         </div>
-
+        
         <div className="text-center mt-10 pt-8 border-t border-base-300 text-sm opacity-70">
           © {new Date().getFullYear()} BookCourier – All Rights Reserved
         </div>
