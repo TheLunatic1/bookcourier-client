@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Section with Animation */}
-      <section className="hero min-h-screen bg-gradient-to-br from-primary/10 via-base-100 to-secondary/10">
+      <section className="hero min-h-screen bg-linear-to-br from-primary/10 via-base-100 to-secondary/10">
         <div className="hero-content text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
