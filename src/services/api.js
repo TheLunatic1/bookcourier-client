@@ -1,3 +1,4 @@
+// src/services/api.js
 import axios from "axios";
 
 const API = axios.create({
@@ -5,7 +6,7 @@ const API = axios.create({
   withCredentials: false,
 });
 
-// Add token to every request if available
+// CRITICAL: Send token with every request
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -13,5 +14,14 @@ API.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Add response interceptor to catch errors
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("API Error:", error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
 
 export default API;

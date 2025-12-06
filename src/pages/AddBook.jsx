@@ -2,7 +2,7 @@ import { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { FiBookOpen, FiImage, FiTag, FiUpload, FiX } from "react-icons/fi";
+import { FiBookOpen, FiImage, FiLink, FiUpload, FiX, FiGlobe } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 export default function AddBook() {
@@ -10,6 +10,7 @@ export default function AddBook() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState("");
+  const [isLinkMode, setIsLinkMode] = useState(false);
   const [form, setForm] = useState({
     title: "",
     author: "",
@@ -18,7 +19,7 @@ export default function AddBook() {
     category: "Fiction",
   });
 
-  // Only librarians can access
+  // Only librarians
   if (user?.role !== "librarian") {
     return (
       <div className="min-h-screen bg-base-200 flex items-center justify-center">
@@ -38,17 +39,24 @@ export default function AddBook() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result);
-        setForm({ ...form, coverImage: reader.result });
+        const result = reader.result;
+        setPreview(result);
+        setForm({ ...form, coverImage: result });
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const handleLinkChange = (e) => {
+    const url = e.target.value;
+    setForm({ ...form, coverImage: url });
+    setPreview(url);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.coverImage) {
-      toast.error("Please upload a cover image");
+      toast.error("Please provide a cover image (upload or link)");
       return;
     }
 
@@ -81,90 +89,101 @@ export default function AddBook() {
         <div className="card bg-base-100 shadow-2xl">
           <div className="card-body">
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Cover Image */}
+              {/* Cover Image Section */}
               <div className="form-control">
                 <label className="label">
                   <span className="label-text font-medium flex items-center gap-2">
                     <FiImage /> Book Cover
                   </span>
                 </label>
-                <div className="flex flex-col items-center">
-                  {preview ? (
-                    <div className="relative">
-                      <img src={preview} alt="Preview" className="w-64 h-96 object-cover rounded-xl shadow-lg" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPreview("");
-                          setForm({ ...form, coverImage: "" });
-                        }}
-                        className="absolute top-2 right-2 btn btn-circle btn-error btn-sm"
-                      >
-                        <FiX />
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="cursor-pointer">
-                      <div className="border-4 border-dashed border-base-300 rounded-xl w-64 h-96 flex flex-col items-center justify-center hover:border-primary transition">
-                        <FiUpload className="w-16 h-16 opacity-50" />
-                        <p className="mt-4 text-lg">Click to upload cover</p>
-                        <p className="text-sm opacity-70 mt-2">JPG, PNG up to 10MB</p>
-                      </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleImageChange}
-                        required
-                      />
-                    </label>
-                  )}
+
+                {/* Toggle between Upload and Link */}
+                <div className="tabs tabs-boxed mb-4">
+                  <a
+                    className={`tab ${!isLinkMode ? "tab-active" : ""}`}
+                    onClick={() => setIsLinkMode(false)}
+                  >
+                    <FiUpload className="mr-2" /> Upload Photo
+                  </a>
+                  <a
+                    className={`tab ${isLinkMode ? "tab-active" : ""}`}
+                    onClick={() => setIsLinkMode(true)}
+                  >
+                    <FiLink className="mr-2" /> Paste Link
+                  </a>
                 </div>
+
+                {/* Upload Mode */}
+                {!isLinkMode && !preview && (
+                  <label className="cursor-pointer">
+                    <div className="border-4 border-dashed border-base-300 rounded-xl w-full h-96 flex flex-col items-center justify-center hover:border-primary transition">
+                      <FiUpload className="w-16 h-16 opacity-50" />
+                      <p className="mt-4 text-lg">Click to upload cover</p>
+                      <p className="text-sm opacity-70 mt-2">JPG, PNG, WebP</p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageChange}
+                      required={!isLinkMode}
+                    />
+                  </label>
+                )}
+
+                {/* Link Mode */}
+                {isLinkMode && (
+                  <div className="flex gap-2">
+                    <div className="input-group">
+                      <span className="bg-base-200">
+                        <FiGlobe />
+                      </span>
+                      <input
+                        type="url"
+                        placeholder="https://example.com/cover.jpg"
+                        className="input input-bordered w-full"
+                        value={form.coverImage}
+                        onChange={handleLinkChange}
+                        required={isLinkMode}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Preview */}
+                {preview && (
+                  <div className="relative mt-6">
+                    <img src={preview} alt="Preview" className="w-full max-w-md mx-auto rounded-xl shadow-lg" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPreview("");
+                        setForm({ ...form, coverImage: "" });
+                        setIsLinkMode(false);
+                      }}
+                      className="absolute top-2 right-2 btn btn-circle btn-error btn-sm"
+                    >
+                      <FiX />
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Title & Author */}
+              {/* Rest of the form (same as before) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-medium">Book Title</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter book title"
-                    className="input input-bordered w-full"
-                    value={form.title}
-                    onChange={(e) => setForm({ ...form, title: e.target.value })}
-                    required
-                  />
+                  <label className="label"><span className="label-text font-medium">Book Title</span></label>
+                  <input type="text" placeholder="Enter book title" className="input input-bordered w-full" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
                 </div>
-
                 <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-medium">Author Name</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter author name"
-                    className="input input-bordered w-full"
-                    value={form.author}
-                    onChange={(e) => setForm({ ...form, author: e.target.value })}
-                    required
-                  />
+                  <label className="label"><span className="label-text font-medium">Author Name</span></label>
+                  <input type="text" placeholder="Enter author name" className="input input-bordered w-full" value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} required />
                 </div>
               </div>
 
-              {/* Category */}
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium flex items-center gap-2">
-                    <FiTag /> Category
-                  </span>
-                </label>
-                <select
-                  className="select select-bordered w-full"
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                >
+                <label className="label"><span className="label-text font-medium">Category</span></label>
+                <select className="select select-bordered w-full" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
                   <option>Fiction</option>
                   <option>Non-Fiction</option>
                   <option>Science</option>
@@ -176,40 +195,16 @@ export default function AddBook() {
                 </select>
               </div>
 
-              {/* Description */}
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">Description</span>
-                </label>
-                <textarea
-                  placeholder="Write a brief description..."
-                  className="textarea textarea-bordered h-32"
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                />
+                <label className="label"><span className="label-text font-medium">Description (Optional)</span></label>
+                <textarea placeholder="Write a brief description..." className="textarea textarea-bordered h-32" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
               </div>
 
-              {/* Submit */}
               <div className="flex gap-4">
-                <button
-                  type="submit"
-                  disabled={loading || !form.coverImage}
-                  className="btn btn-primary flex-1"
-                >
-                  {loading ? (
-                    <span className="loading loading-spinner"></span>
-                  ) : (
-                    <>
-                      <FiBookOpen className="mr-2" />
-                      Add Book to Library
-                    </>
-                  )}
+                <button type="submit" disabled={loading || !form.coverImage} className="btn btn-primary flex-1">
+                  {loading ? <span className="loading loading-spinner"></span> : <>Add Book</>}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/my-books")}
-                  className="btn btn-ghost flex-1"
-                >
+                <button type="button" onClick={() => navigate("/my-books")} className="btn btn-ghost flex-1">
                   Cancel
                 </button>
               </div>

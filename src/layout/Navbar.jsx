@@ -18,7 +18,7 @@ export default function Navbar() {
     <div className="navbar bg-base-100 shadow-lg sticky top-0 z-50">
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-2xl font-bold">
-          <img src="/src/assets/bookC.webp" alt="BookCourier" className="h-10 w-10 rounded-lg object-contain bg-white p-1" />
+          <img src="/src/assets/bookC.webp" alt="BookCourier" className="h-10 w-10 rounded-lg object-contain bg-transparent p-1" />
           BookCourier
         </Link>
       </div>

@@ -12,7 +12,7 @@ export default function Footer() {
               <img
                 src="/src/assets/bookC.webp" // have to change logo later
                 alt="BookCourier"
-                className="h-12 w-12 rounded-lg object-contain bg-white p-1"
+                className="h-12 w-12 rounded-lg object-contain bg-transparent p-1"
               />
               <span className="text-2xl font-bold">BookCourier</span>
             </div>

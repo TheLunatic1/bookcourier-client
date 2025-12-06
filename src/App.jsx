@@ -11,6 +11,7 @@ import AddBook from "./pages/AddBook";
 import MyBooks from "./pages/MyBooks";
 import AdminUsers from "./pages/AdminUsers";
 import AdminRequests from "./pages/AdminRequests";
+import BookDetails from "./pages/BookDetails";
 
 // Placeholders
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ function App() {
         <Route path="/my-books" element={<MyBooks />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/requests" element={<AdminRequests />} />
+        <Route path="/book/:id" element={<BookDetails />} />
       </Route>
 
       {/* 404 Page */}
