@@ -1,22 +1,17 @@
-// src/pages/Dashboard.jsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import API from "../services/api";
 import { 
-  FiUser, FiPackage, FiHeart, FiSettings, FiLogOut, 
-  FiStar, FiBookOpen, FiUsers, FiCheckCircle 
+  FiPackage, FiHeart, FiUser, 
+  FiBookOpen, FiUsers, FiCheckCircle,
+  FiLogOut, FiStar
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const [requesting, setRequesting] = useState(false);
-  const [isLibrarian, setIsLibrarian] = useState(user?.role === "librarian");
-
-  useEffect(() => {
-    setIsLibrarian(user?.role === "librarian");
-  }, [user]);
 
   const requestLibrarian = async () => {
     setRequesting(true);
@@ -30,126 +25,136 @@ export default function Dashboard() {
     setRequesting(false);
   };
 
-  if (!user) return <div className="min-h-screen bg-base-200 flex items-center justify-center text-2xl">Loading...</div>;
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
-  const menuItems = {
+  const dashboardCards = {
     user: [
-      { icon: FiPackage, label: "My Orders", href: "/my-orders" },
-      { icon: FiHeart, label: "Wishlist", href: "/wishlist" },
-      { icon: FiUser, label: "Profile", href: "/profile" },
-      { icon: FiSettings, label: "Settings", href: "/settings" },
+      { icon: FiPackage, label: "My Orders", href: "/my-orders", color: "text-blue-600" },
+      { icon: FiHeart, label: "Wishlist", href: "/wishlist", color: "text-pink-600" },
+      { icon: FiUser, label: "Profile", href: "/profile", color: "text-purple-600" },
     ],
     librarian: [
-      { icon: FiBookOpen, label: "Add Book", href: "/add-book" },
-      { icon: FiPackage, label: "My Books", href: "/my-books" },
-      { icon: FiPackage, label: "Manage Orders", href: "/librarian-orders" },
-      { icon: FiUser, label: "Profile", href: "/profile" },
+      { icon: FiBookOpen, label: "Add Book", href: "/add-book", color: "text-green-600" },
+      { icon: FiPackage, label: "My Books", href: "/my-books", color: "text-indigo-600" },
+      { icon: FiPackage, label: "Manage Orders", href: "/librarian-orders", color: "text-orange-600" },
     ],
     admin: [
-      { icon: FiUsers, label: "All Users", href: "/admin/users" },
-      { icon: FiCheckCircle, label: "Librarian Requests", href: "/admin/requests" },
-      { icon: FiPackage, label: "All Orders", href: "/admin/orders" },
-      { icon: FiSettings, label: "Site Settings", href: "/admin/settings" },
+      { icon: FiUsers, label: "All Users", href: "/admin/users", color: "text-red-600" },
+      { icon: FiCheckCircle, label: "Librarian Requests", href: "/admin/requests", color: "text-yellow-600" },
+      { icon: FiPackage, label: "All Orders", href: "/admin/orders", color: "text-teal-600" },
     ],
   };
 
-  const items = menuItems[user.role] || menuItems.user;
+  const cards = dashboardCards[user.role] || dashboardCards.user;
 
   return (
     <div className="min-h-screen bg-base-200">
       <div className="container mx-auto px-4 py-12">
         <div className="grid lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="card bg-base-100 shadow-2xl">
-              <div className="card-body">
-                <div className="text-center mb-6">
-                  <div className="avatar">
-                    <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4">
-                      <img src={user.photoURL} alt={user.name} />
+            <div className="card bg-base-100 shadow-2xl sticky top-6">
+              <div className="card-body p-8">
+                <div className="flex flex-col items-center">
+                  <div className="avatar mb-6">
+                    <div className="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4">
+                      <img src={user.photoURL} alt={user.name} className="object-cover" />
                     </div>
                   </div>
-                  <h2 className="text-2xl font-bold mt-4">{user.name}</h2>
-                  <div className="badge badge-lg badge-primary mt-2">
-                    {user.role.toUpperCase()}
-                  </div>
-                </div>
 
-                {/* Librarian Request Button */}
-                {user.role === "user" && !user.librarianRequest && (
+                  <h2 className="text-2xl font-bold text-center">{user.name}</h2>
+                  <div className="mt-4">
+                    <span className="badge badge-lg badge-primary text-lg py-4 px-6">
+                      {user.role.toUpperCase()}
+                    </span>
+                  </div>
+
+                  {/* Become Librarian */}
+                  {user.role === "user" && !user.librarianRequest && (
+                    <button
+                      onClick={requestLibrarian}
+                      disabled={requesting}
+                      className="btn btn-outline btn-accent w-full mt-8"
+                    >
+                      {requesting ? (
+                        <span className="loading loading-spinner"></span>
+                      ) : (
+                        <>
+                          <FiStar className="mr-2" />
+                          Become a Librarian
+                        </>
+                      )}
+                    </button>
+                  )}
+
+                  {user.librarianRequest && user.role === "user" && (
+                    <div className="alert alert-info shadow-lg mt-8 w-full text-center">
+                      <FiCheckCircle className="w-5 h-5" />
+                      <span className="text-sm">Request sent! Waiting for admin...</span>
+                    </div>
+                  )}
+
+                  <div className="divider my-8"></div>
+
                   <button
-                    onClick={requestLibrarian}
-                    disabled={requesting}
-                    className="btn btn-outline btn-accent w-full mb-4"
+                    onClick={logout}
+                    className="btn btn-error btn-outline w-full"
                   >
-                    {requesting ? (
-                      <span className="loading loading-spinner"></span>
-                    ) : (
-                      <>
-                        <FiStar className="mr-2" /> Become a Librarian
-                      </>
-                    )}
+                    <FiLogOut className="mr-2" />
+                    Logout
                   </button>
-                )}
-
-                {user.librarianRequest && user.role === "user" && (
-                  <div className="alert alert-info shadow-lg mb-4">
-                    <FiCheckCircle />
-                    <span>Request sent! Waiting for admin approval...</span>
-                  </div>
-                )}
-
-                {/* Menu Items */}
-                <div className="menu p-0">
-                  {items.map((item, i) => (
-                    <li key={i}>
-                      <Link to={item.href} className="py-3">
-                        <item.icon />
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
                 </div>
-
-                <div className="divider"></div>
-                
-                <button onClick={logout} className="btn btn-error btn-outline w-full">
-                  <FiLogOut className="mr-2" /> Logout
-                </button>
               </div>
             </div>
           </div>
 
-          {/* Main Content */}
+          {/* RIGHT — PERFECTLY ALIGNED CARDS */}
           <div className="lg:col-span-3">
-            <div className="card bg-base-100 shadow-2xl">
-              <div className="card-body">
-                <h1 className="text-4xl font-bold mb-4">
-                  {user.role === "admin" && "Admin Control Panel"}
-                  {user.role === "librarian" && "Librarian Dashboard"}
-                  {user.role === "user" && "Welcome Back!"}
-                </h1>
-                <p className="text-xl opacity-70">
-                  {user.role === "admin" && "Manage the entire BookCourier system"}
-                  {user.role === "librarian" && "Manage your library books and orders"}
-                  {user.role === "user" && `Hello, ${user.name}! Ready to read?`}
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-                  {items.map((item, i) => (
-                    <Link
-                      key={i}
-                      to={item.href}
-                      className="card bg-base-200 hover:bg-base-300 transition-all hover:scale-105 cursor-pointer p-8 text-center"
-                    >
-                      <item.icon className="w-12 h-12 mx-auto mb-4 text-primary" />
-                      <h3 className="font-bold text-lg">{item.label}</h3>
-                      <p className="text-sm opacity-70 mt-2">Click to manage</p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+            <div className="text-center mb-12">
+              <h1 className="text-5xl font-bold mb-4">
+                {user.role === "admin" && "Admin Control Panel"}
+                {user.role === "librarian" && "Librarian Dashboard"}
+                {user.role === "user" && `Welcome back, ${user.name.split(" ")[0]}!`}
+              </h1>
+              <p className="text-xl opacity-70 max-w-2xl mx-auto">
+                {user.role === "admin" && "You have full control over BookCourier"}
+                {user.role === "librarian" && "Manage your books and serve our readers"}
+                {user.role === "user" && "Discover amazing books & get them delivered to your door!"}
+              </p>
             </div>
+
+            {/* ICONS PERFECTLY CENTERED — NO TEXT BELOW */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {cards.map((card, i) => (
+                <Link
+                  key={i}
+                  to={card.href}
+                  className="group flex flex-col items-center justify-center p-10 rounded-2xl bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:scale-110"
+                >
+                  <div className={`text-8xl mb-6 ${card.color} group-hover:scale-125 transition-transform`}>
+                    <card.icon />
+                  </div>
+                  <h3 className="text-2xl font-bold text-center">{card.label}</h3>
+                </Link>
+              ))}
+            </div>
+
+            {/* Extra for Users */}
+            {user.role === "user" && (
+              <div className="text-center mt-16">
+                <p className="text-lg opacity-80 mb-6">
+                  Ready to read? Browse our collection and get books delivered!
+                </p>
+                <Link to="/all-books" className="btn btn-primary btn-lg">
+                  Browse All Books
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

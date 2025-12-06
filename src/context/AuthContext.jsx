@@ -1,30 +1,32 @@
-import { createContext, useState, useLayoutEffect } from "react";
+// src/context/AuthContext.jsx
+import { createContext, useContext, useState, useEffect } from "react";
 import API from "../services/api";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
+// CREATE CONTEXT
 export const AuthContext = createContext();
+
+// HOOK
+export const useAuth = () => useContext(AuthContext);
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  useLayoutEffect(() => {
-    const loadUser = () => {
-      const token = localStorage.getItem("token");
-      const userData = localStorage.getItem("user");
-
-      if (token && userData) {
-        try {
-          setUser(JSON.parse(userData));
-        } catch (err) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-        }
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("user");
+    if (token && userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (err) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
       }
-      setLoading(false);
-    };
-
-    loadUser();
+    }
+    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
@@ -35,7 +37,9 @@ export default function AuthProvider({ children }) {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
-      toast.success(`Welcome, ${userData.name}!`);
+
+      toast.success(`Welcome back, ${userData.name}!`);
+      navigate("/dashboard");
       return { success: true };
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
@@ -51,7 +55,9 @@ export default function AuthProvider({ children }) {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
-      toast.success("Registered successfully!");
+
+      toast.success("Account created!");
+      navigate("/dashboard");
       return { success: true };
     } catch (error) {
       toast.error(error.response?.data?.message || "Registration failed");
@@ -63,7 +69,8 @@ export default function AuthProvider({ children }) {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    toast.success("Logged out");
+    toast.success("Logged out successfully");
+    navigate("/login", { replace: true });
   };
 
   return (

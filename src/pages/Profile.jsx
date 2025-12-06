@@ -1,7 +1,8 @@
+// src/pages/Profile.jsx
 import { useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import API from "../services/api";
-import { FiUser, FiMail, FiCamera, FiSave, FiX } from "react-icons/fi";
+import { FiUser, FiMail, FiCamera, FiLink, FiSave, FiX, FiCheckCircle } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 export default function Profile() {
@@ -11,6 +12,8 @@ export default function Profile() {
   const [email, setEmail] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [preview, setPreview] = useState("");
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -28,11 +31,20 @@ export default function Profile() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result);
+        const result = reader.result;
+        setPreview(result);
+        setPhotoURL(result);
       };
       reader.readAsDataURL(file);
-      // In real app, upload to Cloudinary
-      setPhotoURL(reader.result);
+    }
+  };
+
+  const handleUrlSubmit = () => {
+    if (urlInput.trim()) {
+      setPreview(urlInput);
+      setPhotoURL(urlInput);
+      setShowUrlInput(false);
+      setUrlInput("");
     }
   };
 
@@ -44,7 +56,6 @@ export default function Profile() {
         name,
         photoURL,
       });
-      // Update localStorage
       const updatedUser = { ...user, name, photoURL };
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
@@ -65,14 +76,17 @@ export default function Profile() {
         <div className="max-w-2xl mx-auto">
           <div className="card bg-base-100 shadow-2xl">
             <div className="card-body">
+              {/* Avatar Section */}
               <div className="flex flex-col items-center mb-8">
                 <div className="relative">
                   <div className="avatar">
-                    <div className="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4">
+                    <div className="w-40 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4">
                       <img src={preview} alt="Profile" />
                     </div>
                   </div>
-                  <label className="absolute bottom-0 right-0 btn btn-circle btn-primary">
+
+                  {/* Upload Button */}
+                  <label className="absolute bottom-2 right-2 btn btn-circle btn-primary">
                     <FiCamera className="w-6 h-6" />
                     <input
                       type="file"
@@ -82,13 +96,45 @@ export default function Profile() {
                     />
                   </label>
                 </div>
-                <h2 className="text-2xl font-bold mt-4">{name}</h2>
-                <p className="text-sm opacity-70">{email}</p>
-                <div className="badge badge-lg badge-primary mt-2">
+
+                {/* LINK OPTION */}
+                <div className="mt-6 text-center">
+                  {showUrlInput ? (
+                    <div className="flex gap-2 max-w-sm">
+                      <input
+                        type="url"
+                        placeholder="https://example.com/photo.jpg"
+                        className="input input-bordered flex-1"
+                        value={urlInput}
+                        onChange={(e) => setUrlInput(e.target.value)}
+                        onKeyPress={(e) => e.key === "Enter" && handleUrlSubmit()}
+                      />
+                      <button onClick={handleUrlSubmit} className="btn btn-success">
+                        <FiCheckCircle />
+                      </button>
+                      <button onClick={() => setShowUrlInput(false)} className="btn btn-error">
+                        <FiX />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setShowUrlInput(true)}
+                      className="link link-primary flex items-center gap-2 hover:link-hover"
+                    >
+                      <FiLink className="w-5 h-5" />
+                      Add photo from URL
+                    </button>
+                  )}
+                </div>
+
+                <h2 className="text-3xl font-bold mt-6">{name}</h2>
+                <p className="text-lg opacity-70">{email}</p>
+                <div className="badge badge-lg badge-primary mt-3 py-4 px-6">
                   {user.role.toUpperCase()}
                 </div>
               </div>
 
+              {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="form-control">
                   <label className="label">
@@ -100,7 +146,7 @@ export default function Profile() {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full text-lg"
                     required
                   />
                 </div>
@@ -117,9 +163,6 @@ export default function Profile() {
                     disabled
                     className="input input-bordered w-full bg-base-200"
                   />
-                  <label className="label">
-                    <span className="label-text-alt">Email cannot be changed</span>
-                  </label>
                 </div>
 
                 <div className="flex gap-4">

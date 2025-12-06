@@ -162,19 +162,19 @@ export default function BookDetails() {
                 )}
 
                 <div className="flex gap-4 mt-10">
-                  <button 
-                    className={`btn btn-lg flex-1 ${book.isAvailable ? "btn-primary" : "btn-disabled"}`}
-                    disabled={!book.isAvailable}
-                  >
-                    {book.isAvailable ? (
-                      <>
-                        <FiCheckCircle className="mr-2" />
-                        Request Delivery
-                      </>
-                    ) : (
-                      "Currently Unavailable"
-                    )}
-                  </button>
+                  {book.isAvailable ? (
+                    <Link 
+                      to={`/request-delivery?book=${book._id}`} 
+                      className="btn btn-primary btn-lg flex-1"
+                    >
+                      <FiCheckCircle className="mr-2" />
+                      Request Delivery (৳150)
+                    </Link>
+                  ) : (
+                    <button className="btn btn-disabled btn-lg flex-1" disabled>
+                      Currently Unavailable
+                    </button>
+                  )}
                   <button className="btn btn-outline btn-lg">
                     <FiMessageCircle className="mr-2" />
                     Write Review

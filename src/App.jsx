@@ -12,8 +12,10 @@ import MyBooks from "./pages/MyBooks";
 import AdminUsers from "./pages/AdminUsers";
 import AdminRequests from "./pages/AdminRequests";
 import BookDetails from "./pages/BookDetails";
-
-// Placeholders
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCancel from "./pages/PaymentCancel";
+import LibrarianOrders from "./pages/LibrarianOrders";
+import AdminOrders from "./pages/AdminOrders";
 import NotFound from "./pages/NotFound";
 import AllBooks from "./pages/AllBooks";
 import RequestDelivery from "./pages/RequestDelivery";
@@ -39,6 +41,10 @@ function App() {
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/requests" element={<AdminRequests />} />
         <Route path="/book/:id" element={<BookDetails />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-cancel" element={<PaymentCancel />} />
+        <Route path="/librarian-orders" element={<LibrarianOrders />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
       </Route>
 
       {/* 404 Page */}
