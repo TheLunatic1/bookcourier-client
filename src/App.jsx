@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import AllBooks from "./pages/AllBooks";
 import RequestDelivery from "./pages/RequestDelivery";
 import Dashboard from "./pages/Dashboard";
+import Invoices from "./pages/Invoices";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path="/payment-cancel" element={<PaymentCancel />} />
         <Route path="/librarian-orders" element={<LibrarianOrders />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/invoices" element={<Invoices />} />
       </Route>
 
       {/* 404 Page */}

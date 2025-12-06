@@ -5,7 +5,8 @@ import API from "../services/api";
 import { 
   FiPackage, FiHeart, FiUser, 
   FiBookOpen, FiUsers, FiCheckCircle,
-  FiLogOut, FiStar
+  FiLogOut, FiStar,
+  FiFileText
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 
@@ -38,6 +39,7 @@ export default function Dashboard() {
       { icon: FiPackage, label: "My Orders", href: "/my-orders", color: "text-blue-600" },
       { icon: FiHeart, label: "Wishlist", href: "/wishlist", color: "text-pink-600" },
       { icon: FiUser, label: "Profile", href: "/profile", color: "text-purple-600" },
+      { icon: FiFileText, label: "Invoices", href: "/invoices", color: "text-teal-600" },
     ],
     librarian: [
       { icon: FiBookOpen, label: "Add Book", href: "/add-book", color: "text-green-600" },
