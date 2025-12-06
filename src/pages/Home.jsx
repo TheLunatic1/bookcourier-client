@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -146,46 +145,77 @@ export default function Home() {
         </div>
       </section>
 
-      {/* COVERAGE MAP */}
-      <section className="py-20 bg-base-300">
+      {/* WHY CHOOSE US */}
+      <section className="py-20 bg-base-100">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">Delivery Coverage</h2>
-          <div className="max-w-4xl mx-auto h-96 rounded-2xl overflow-hidden shadow-2xl">
+          <h2 className="text-5xl font-bold text-center mb-16 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Why Choose BookCourier?
+          </h2>
+          <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            <div className="text-center group">
+              <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition">
+                <FiTruck className="w-12 h-12 text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Lightning Fast Delivery</h3>
+              <p className="text-base-content/70 text-lg">
+                Get your favorite books delivered within <strong>48 hours</strong> — faster than you can finish a chapter!
+              </p>
+            </div>
+              
+            <div className="text-center group">
+              <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-success/10 flex items-center justify-center group-hover:bg-success/20 transition">
+                <FiCheckCircle className="w-12 h-12 text-success" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Trusted Local Libraries</h3>
+              <p className="text-base-content/70 text-lg">
+                Every book comes from verified libraries near you — quality and authenticity guaranteed.
+              </p>
+            </div>
+              
+            <div className="text-center group">
+              <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition">
+                <FiClock className="w-12 h-12 text-accent" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">24/7 Support & Easy Returns</h3>
+              <p className="text-base-content/70 text-lg">
+                We're here whenever you need us. Not happy? Return it free within 7 days.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+              
+      {/* COVERAGE MAP */}
+      <section className="py-20 bg-gradient-to-b from-base-200 to-base-300">
+        <div className="container mx-auto px-4">
+          <h2 className="text-5xl font-bold text-center mb-4">We Deliver Across Bangladesh</h2>
+          <p className="text-xl text-center opacity-80 mb-12 max-w-2xl mx-auto">
+            From Dhaka to the hills of Sylhet — if you're in a major city, we're coming to you!
+          </p>
+              
+          <div className="max-w-5xl mx-auto h-96 rounded-3xl overflow-hidden shadow-2xl border-4 border-primary/20">
             <MapContainer center={[23.685, 90.3563]} zoom={6} style={{ height: "100%", width: "100%" }}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='© OpenStreetMap'
+                attribution='© OpenStreetMap contributors'
               />
               {cities.map((city) => (
                 <Marker key={city.name} position={city.position}>
-                  <Popup>{city.name}</Popup>
+                  <Popup>
+                    <div className="text-center">
+                      <h3 className="font-bold text-lg">{city.name}</h3>
+                      <p className="text-sm">Delivery Available</p>
+                    </div>
+                  </Popup>
                 </Marker>
               ))}
             </MapContainer>
           </div>
-        </div>
-      </section>
-
-      {/* WHY CHOOSE US */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">Why Choose BookCourier?</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="card bg-base-100 shadow-xl p-8 text-center hover:scale-105 transition">
-              <FiTruck className="w-16 h-16 mx-auto mb-6 text-primary" />
-              <h3 className="text-2xl font-bold mb-4">Fast Delivery</h3>
-              <p>Get your books delivered within 48 hours</p>
-            </div>
-            <div className="card bg-base-100 shadow-xl p-8 text-center hover:scale-105 transition">
-              <FiCheckCircle className="w-16 h-16 mx-auto mb-6 text-success" />
-              <h3 className="text-2xl font-bold mb-4">Trusted Libraries</h3>
-              <p>Borrow from verified local libraries</p>
-            </div>
-            <div className="card bg-base-100 shadow-xl p-8 text-center hover:scale-105 transition">
-              <FiClock className="w-16 h-16 mx-auto mb-6 text-accent" />
-              <h3 className="text-2xl font-bold mb-4">24/7 Support</h3>
-              <p>We're here to help anytime</p>
-            </div>
+            
+          <div className="text-center mt-12">
+            <p className="text-lg opacity-80">
+              Serving <strong>10+ major cities</strong> and expanding every month!
+            </p>
           </div>
         </div>
       </section>
