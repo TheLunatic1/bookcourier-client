@@ -1,41 +1,122 @@
 import { useState, useEffect } from "react";
 import API from "../services/api";
 import { Link } from "react-router-dom";
+import { FiSearch, FiFilter, FiBookOpen } from "react-icons/fi";
 
 export default function AllBooks() {
   const [books, setBooks] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
 
   useEffect(() => {
-    API.get("/books").then(res => {
-      setBooks(res.data);
-      setLoading(false);
-    });
+    const fetchBooks = async () => {
+      try {
+        const res = await API.get("/books");
+        const availableBooks = res.data.filter(book => book.isAvailable);
+        setBooks(availableBooks);
+        setFilteredBooks(availableBooks);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBooks();
   }, []);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><span className="loading loading-spinner loading-lg"></span></div>;
+  useEffect(() => {
+    let filtered = books.filter(book =>
+      book.title.toLowerCase().includes(search.toLowerCase()) ||
+      book.author.toLowerCase().includes(search.toLowerCase())
+    );
+
+    // Sort
+    if (sortBy === "newest") {
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortBy === "oldest") {
+      filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else if (sortBy === "title") {
+      filtered.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    setFilteredBooks(filtered);
+  }, [search, sortBy, books]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-base-200 py-12">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-12">All Books</h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {books.map(book => (
-            <div key={book._id} className="card bg-base-100 shadow-xl hover:shadow-2xl transition">
-              <figure className="px-6 pt-6">
-                <img src={book.coverImage} alt={book.title} className="rounded-xl h-64 object-cover" />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{book.title}</h2>
-                <p className="text-sm opacity-70">by {book.author}</p>
-                <p className="text-sm mt-2 opacity-60">Added by: {book.addedByName}</p>
-                <div className="card-actions justify-end mt-4">
-                  <Link to={`/book/${book._id}`} className="btn btn-primary btn-sm">View Details</Link>
-                </div>
-              </div>
+        <h1 className="text-5xl font-bold text-center mb-12">All Books</h1>
+
+        {/* SEARCH + SORT BAR */}
+        <div className="flex flex-col md:flex-row gap-4 mb-12 max-w-4xl mx-auto">
+          <div className="flex-1">
+            <div className="input-group">
+              <span><FiSearch className="w-6 h-6" /></span>
+              <input
+                type="text"
+                placeholder="Search by title or author..."
+                className="input input-bordered w-full"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
-          ))}
+          </div>
+
+          <select
+            className="select select-bordered w-full md:w-64"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="title">Title A-Z</option>
+          </select>
         </div>
+
+        {/* BOOKS GRID */}
+        {filteredBooks.length === 0 ? (
+          <div className="text-center py-20">
+            <FiBookOpen className="w-32 h-32 mx-auto opacity-20 mb-6" />
+            <p className="text-2xl opacity-70">No books found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+            {filteredBooks.map((book) => (
+              <Link
+                key={book._id}
+                to={`/book/${book._id}`}
+                className="group card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+              >
+                <figure className="px-6 pt-6">
+                  <img
+                    src={book.coverImage}
+                    alt={book.title}
+                    className="rounded-xl h-64 w-full object-cover group-hover:opacity-90 transition"
+                  />
+                </figure>
+                <div className="card-body p-6">
+                  <h3 className="card-title text-sm line-clamp-2">{book.title}</h3>
+                  <p className="text-xs opacity-70">by {book.author}</p>
+                  <div className="mt-4">
+                    <div className="badge badge-success badge-sm">
+                      Available
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
