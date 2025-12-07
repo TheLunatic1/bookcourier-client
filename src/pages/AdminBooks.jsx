@@ -1,4 +1,3 @@
-// src/pages/AdminBooks.jsx
 import { useState, useEffect } from "react";
 import API from "../services/api";
 import useAuth from "../hooks/useAuth";
