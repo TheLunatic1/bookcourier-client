@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import API from "../services/api";
 import { Link } from "react-router-dom";
-import { FiSearch, FiFilter, FiBookOpen } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 
 export default function AllBooks() {
   const [books, setBooks] = useState([]);
@@ -32,11 +32,12 @@ export default function AllBooks() {
       book.author.toLowerCase().includes(search.toLowerCase())
     );
 
-    // Sort
     if (sortBy === "newest") {
       filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (sortBy === "oldest") {
-      filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else if (sortBy === "price-low") {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortBy === "price-high") {
+      filtered.sort((a, b) => b.price - a.price);
     } else if (sortBy === "title") {
       filtered.sort((a, b) => a.title.localeCompare(b.title));
     }
@@ -44,20 +45,13 @@ export default function AllBooks() {
     setFilteredBooks(filtered);
   }, [search, sortBy, books]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-base-200 flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
+  if (loading) return <div className="min-h-screen bg-base-200 flex items-center justify-center"><span className="loading loading-spinner loading-lg"></span></div>;
 
   return (
     <div className="min-h-screen bg-base-200 py-12">
       <div className="container mx-auto px-4">
         <h1 className="text-5xl font-bold text-center mb-12">All Books</h1>
 
-        {/* SEARCH + SORT BAR */}
         <div className="flex flex-col md:flex-row gap-4 mb-12 max-w-4xl mx-auto">
           <div className="flex-1">
             <div className="input-group">
@@ -78,15 +72,14 @@ export default function AllBooks() {
             onChange={(e) => setSortBy(e.target.value)}
           >
             <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
             <option value="title">Title A-Z</option>
           </select>
         </div>
 
-        {/* BOOKS GRID */}
         {filteredBooks.length === 0 ? (
           <div className="text-center py-20">
-            <FiBookOpen className="w-32 h-32 mx-auto opacity-20 mb-6" />
             <p className="text-2xl opacity-70">No books found</p>
           </div>
         ) : (
@@ -98,20 +91,12 @@ export default function AllBooks() {
                 className="group card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:scale-105"
               >
                 <figure className="px-6 pt-6">
-                  <img
-                    src={book.coverImage}
-                    alt={book.title}
-                    className="rounded-xl h-64 w-full object-cover group-hover:opacity-90 transition"
-                  />
+                  <img src={book.coverImage} alt={book.title} className="rounded-xl h-64 w-full object-cover" />
                 </figure>
                 <div className="card-body p-6">
                   <h3 className="card-title text-sm line-clamp-2">{book.title}</h3>
                   <p className="text-xs opacity-70">by {book.author}</p>
-                  <div className="mt-4">
-                    <div className="badge badge-success badge-sm">
-                      Available
-                    </div>
-                  </div>
+                  <p className="text-lg font-bold text-primary mt-2">৳{book.price}</p>
                 </div>
               </Link>
             ))}
