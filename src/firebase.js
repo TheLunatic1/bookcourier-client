@@ -12,5 +12,5 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-import { getAdditionalUserInfo } from "firebase/auth";
 export const auth = getAuth(app);
+export default app;
