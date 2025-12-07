@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex flex-col items-start gap-3 mb-4">
-              <img src="../../public/bookC.png" alt="BookCourier" className="h-10 w-10 rounded-lg object-contain bg-transparent p-1" />
+              <img src="https://i.imgur.com/kQ4ngAc.png" alt="BookCourier" className="h-10 w-10 rounded-lg object-contain bg-transparent p-1" />
               <h2 className="text-2xl font-bold">BookCourier</h2>
             </div>
             <p className="text-base-content/70">

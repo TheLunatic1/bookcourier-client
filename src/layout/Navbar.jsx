@@ -24,7 +24,7 @@ export default function Navbar() {
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-2xl font-bold">
           <img
-            src="../../public/bookC.png"
+            src="https://i.imgur.com/kQ4ngAc.png"
             alt="BookCourier"
             className="h-10 w-10 rounded-lg object-contain bg-transparent p-1"
           />
