@@ -87,15 +87,15 @@ export default function Register() {
             {/* PROFILE PICTURE */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-medium flex items-center gap-2">
+                <span className="label-text font-medium flex items-center gap-2 w-full">
                   <FiImage /> Profile Picture <span className="text-error">*</span>
                 </span>
               </label>
 
               {!preview ? (
                 <div className="space-y-4">
-                  <label className="border-4 border-dashed border-base-300 rounded-xl w-full h-64 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition">
-                    <FiImage className="w-16 h-16 opacity-50" />
+                  <label className="border-4 border-dashed border-base-300 rounded-xl w-full h-64 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition ">
+                    <FiImage className="w-1/2 h-1/2 opacity-50 mt-10" />
                     <p className="mt-4">Click to upload image</p>
                     <input
                       type="file"
@@ -110,7 +110,7 @@ export default function Register() {
                     <button
                       type="button"
                       onClick={() => setShowUrlInput(true)}
-                      className="link link-primary ml-2 flex items-center gap-1"
+                      className="link link-primary ml-2 flex items-center gap-1 w-full"
                     >
                       <FiLink className="w-4 h-4" />
                       Add from URL
@@ -152,7 +152,7 @@ export default function Register() {
 
               {!preview && (
                 <label className="label">
-                  <span className="label-text-alt text-error">Profile picture is required</span>
+                  <span className="label-text-alt text-error w-full">Profile picture is required</span>
                 </label>
               )}
             </div>
@@ -163,7 +163,7 @@ export default function Register() {
               <input
                 type="text"
                 placeholder="John Doe"
-                className="input input-bordered"
+                className="input input-bordered w-full"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
@@ -176,7 +176,7 @@ export default function Register() {
               <input
                 type="email"
                 placeholder="you@example.com"
-                className="input input-bordered"
+                className="input input-bordered w-full"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required

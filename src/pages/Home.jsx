@@ -10,8 +10,9 @@ import L from "leaflet";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import { FiArrowRight, FiCheckCircle, FiTruck, FiBookOpen, FiClock } from "react-icons/fi";
+import useAuth from "../hooks/useAuth";
 
-// Fix Leaflet icon
+// Leaflet icon
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -27,7 +28,7 @@ export default function Home() {
     const fetchLatestBooks = async () => {
       try {
         const res = await API.get("/books");
-        // Get only available books, sort by newest, take 6
+        // Get available books, sort by newest, take 6
         const available = res.data
           .filter(book => book.isAvailable)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -42,26 +43,6 @@ export default function Home() {
     fetchLatestBooks();
   }, []);
 
-  const slides = [
-    {
-      title: "Get Books Delivered to Your Door",
-      desc: "Borrow from local libraries without leaving home",
-      btn: "Browse Books",
-      to: "/all-books",
-    },
-    {
-      title: "1000+ Books Available",
-      desc: "From classics to latest releases",
-      btn: "Request Delivery",
-      to: "/request-delivery",
-    },
-    {
-      title: "Fast & Secure Delivery",
-      desc: "Pay only ৳150 for delivery",
-      btn: "Learn More",
-      to: "/about",
-    },
-  ];
 
   const cities = [
     { name: "Dhaka", position: [23.8103, 90.4125] },
@@ -70,39 +51,112 @@ export default function Home() {
     { name: "Khulna", position: [22.8456, 89.5403] },
   ];
 
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-base-200">
+
       {/* HERO SLIDER */}
       <section className="relative">
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
-          navigation
+          navigation={true}
           pagination={{ clickable: true }}
-          autoplay={{ delay: 5000 }}
-          loop
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          loop={true}
           className="h-screen"
         >
-          {slides.map((slide, i) => (
-            <SwiperSlide key={i}>
-              <div className="hero h-full bg-gradient-to-r from-primary to-secondary">
-                <div className="hero-overlay bg-opacity-60"></div>
-                <div className="hero-content text-center text-neutral-content">
-                  <div className="max-w-4xl">
-                    <h1 className="text-5xl md:text-7xl font-bold mb-8">{slide.title}</h1>
-                    <p className="text-xl md:text-2xl mb-12 opacity-90">{slide.desc}</p>
-                    <Link to={slide.to} className="btn btn-lg btn-accent">
-                      {slide.btn}
-                      <FiArrowRight className="ml-2" />
-                    </Link>
-                  </div>
+          {/* SLIDE 1 */}
+          <SwiperSlide>
+            <div className="hero h-full bg-linear-to-br from-blue-600 to-indigo-700">
+              <div className="hero-overlay bg-black/60"></div>
+              <div className="hero-content text-center text-white">
+                <div className="max-w-5xl">
+                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
+                    Books Delivered
+                    <span className="block text-cyan-300 mt-4">to Your Doorstep</span>
+                  </h1>
+                  <p className="text-xl md:text-3xl mb-12 font-light opacity-95 max-w-3xl mx-auto">
+                    Borrow from local libraries — delivered in 48 hours for just ৳150
+                  </p>
+                  <Link to="/all-books" className="btn btn-info btn-lg text-xl px-12 shadow-2xl hover:shadow-info/50">
+                    Browse Books
+                    <FiArrowRight className="ml-3 w-6 h-6" />
+                  </Link>
                 </div>
               </div>
-            </SwiperSlide>
-          ))}
+            </div>
+          </SwiperSlide>
+
+          {/* SLIDE 2 */}
+          <SwiperSlide>
+            <div className="hero h-full bg-linear-to-br from-indigo-700 to-purple-700">
+              <div className="hero-overlay bg-black/60"></div>
+              <div className="hero-content text-center text-white">
+                <div className="max-w-5xl">
+                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
+                    1000+ Books
+                    <span className="block text-cyan-300 mt-4">Ready to Borrow</span>
+                  </h1>
+                  <p className="text-xl md:text-3xl mb-12 font-light opacity-95 max-w-3xl mx-auto">
+                    From classics to bestsellers — all from trusted libraries near you
+                  </p>
+                  <Link to="/all-books" className="btn btn-info btn-lg text-xl px-12 shadow-2xl hover:shadow-info/50">
+                    Explore Now
+                    <FiArrowRight className="ml-3 w-6 h-6" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </SwiperSlide>
+
+          {/* SLIDE 3 */}
+          <SwiperSlide>
+            <div className="hero h-full bg-linear-to-br from-purple-700 to-pink-700">
+              <div className="hero-overlay bg-black/60"></div>
+              <div className="hero-content text-center text-white">
+                <div className="max-w-5xl">
+                  {user ? (
+                    <>
+                      <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
+                        Welcome Back,
+                        <span className="block text-cyan-300 mt-4">{user.name.split(" ")[0]}!</span>
+                      </h1>
+                      <p className="text-xl md:text-3xl mb-12 font-light opacity-95 max-w-3xl mx-auto">
+                        Your next great read is waiting
+                      </p>
+                      <Link to="/dashboard" className="btn btn-info btn-lg text-xl px-12 shadow-2xl hover:shadow-info/50">
+                        Go to Dashboard
+                        <FiArrowRight className="ml-3 w-6 h-6" />
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
+                        Join BookCourier
+                        <span className="block text-cyan-300 mt-4">Today</span>
+                      </h1>
+                      <p className="text-xl md:text-3xl mb-12 font-light opacity-95 max-w-3xl mx-auto">
+                        Start your reading journey in seconds
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                        <Link to="/register" className="btn btn-info btn-lg text-xl px-12 shadow-2xl hover:shadow-info/50">
+                          Register Now
+                        </Link>
+                        <Link to="/login" className="btn btn-ghost btn-lg text-xl px-12 border-2 border-white/30 hover:border-white">
+                          Login
+                        </Link>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </SwiperSlide>
         </Swiper>
       </section>
-
-      {/* LATEST BOOKS — REAL DATA FROM LIBRARIANS */}
+                
+      {/* LATEST BOOKS */}
       <section className="py-20 bg-base-100">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">Latest Books</h2>
@@ -116,31 +170,52 @@ export default function Home() {
               <p className="text-2xl opacity-70">No books available yet</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            <Swiper
+              modules={[Autoplay, Pagination, Navigation]}
+              spaceBetween={40}
+              slidesPerView={1.5}
+              centeredSlides={true}
+              autoplay={{ delay: 3000, disableOnInteraction: false }}
+              loop={true}
+              pagination={{ clickable: true }}
+              navigation={true}
+              grabCursor={true}
+              breakpoints={{
+                640: { slidesPerView: 2, spaceBetween: 30, centeredSlides: false },
+                768: { slidesPerView: 3, spaceBetween: 35 },
+                1024: { slidesPerView: 4, spaceBetween: 40 },
+              }}
+              className="latest-books-swiper"
+            >
               {latestBooks.map((book) => (
-                <Link
-                  key={book._id}
-                  to={`/book/${book._id}`}
-                  className="group card bg-base-200 shadow-xl hover:shadow-2xl transition-all hover:scale-105"
-                >
-                  <figure className="px-4 pt-4">
-                    <img
-                      src={book.coverImage}
-                      alt={book.title}
-                      className="rounded-xl h-64 w-full object-cover group-hover:opacity-90 transition"
-                    />
-                  </figure>
-                  <div className="card-body p-4 text-center">
-                    <h3 className="font-bold text-sm line-clamp-2">{book.title}</h3>
-                    <p className="text-xs opacity-70">by {book.author}</p>
-                    <div className="badge badge-success badge-sm mt-2">
-                      <FiCheckCircle className="mr-1" />
-                      Available
+                <SwiperSlide key={book._id}>
+                  <Link to={`/book/${book._id}`} className="block h-full">
+                    <div className="card bg-base-200 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 rounded-3xl overflow-hidden h-full flex flex-col border border-base-300">
+                      <figure className="px-10 pt-10">
+                        <img
+                          src={book.coverImage}
+                          alt={book.title}
+                          className="rounded-2xl h-96 w-full object-cover shadow-2xl border-4 border-white"
+                        />
+                      </figure>
+                      <div className="card-body p-8 text-center flex flex-col justify-between flex-1 bg-linear-to-b from-base-200 to-base-300">
+                        <div>
+                          <h3 className="font-bold text-2xl line-clamp-2 leading-tight text-primary">
+                            {book.title}
+                          </h3>
+                          <p className="text-lg opacity-90 mt-3 font-medium">by {book.author}</p>
+                        </div>
+                        <div className="mt-6">
+                          <div className="badge badge-success badge-lg py-5 px-8 text-lg font-bold">
+                            ৳{book.price}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </SwiperSlide>
               ))}
-            </div>
+            </Swiper>
           )}
         </div>
       </section>
@@ -148,7 +223,7 @@ export default function Home() {
       {/* WHY CHOOSE US */}
       <section className="py-20 bg-base-100">
         <div className="container mx-auto px-4">
-          <h2 className="text-5xl font-bold text-center mb-16 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h2 className="text-5xl font-bold text-center mb-16 bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
             Why Choose BookCourier?
           </h2>
           <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
@@ -186,7 +261,7 @@ export default function Home() {
       </section>
               
       {/* COVERAGE MAP */}
-      <section className="py-20 bg-gradient-to-b from-base-200 to-base-300">
+      <section className="py-20 bg-linear-to-b from-base-200 to-base-300">
         <div className="container mx-auto px-4">
           <h2 className="text-5xl font-bold text-center mb-4">We Deliver Across Bangladesh</h2>
           <p className="text-xl text-center opacity-80 mb-12 max-w-2xl mx-auto">

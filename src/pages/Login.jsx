@@ -59,24 +59,24 @@ export default function Login() {
           <h2 className="text-3xl font-bold text-center mb-8">Login to BookCourier</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="form-control">
+            <div className=" form-control">
               <label className="label"><span className="label-text">Email</span></label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input input-bordered"
+                className="input input-bordered w-full"
                 required
               />
             </div>
 
-            <div className="form-control">
+            <div className=" form-control">
               <label className="label"><span className="label-text">Password</span></label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="input input-bordered"
+                className="input input-bordered w-full"
                 required
               />
             </div>

@@ -258,20 +258,20 @@ export default function BookDetails() {
 
               <form onSubmit={handleOrder}>
                 <div className="form-control mb-4">
-                  <label className="label"><span className="label-text">Name</span></label>
-                  <input type="text" value={user?.name || ""} className="input input-bordered" disabled />
+                  <label className="label"><span className="label-text w-full">Name</span></label>
+                  <input type="text" value={user?.name || ""} className="input input-bordered w-full" disabled />
                 </div>
                 <div className="form-control mb-4">
-                  <label className="label"><span className="label-text">Email</span></label>
-                  <input type="email" value={user?.email || ""} className="input input-bordered" disabled />
+                  <label className="label"><span className="label-text w-full">Email</span></label>
+                  <input type="email" value={user?.email || ""} className="input input-bordered w-full" disabled />
                 </div>
                 <div className="form-control mb-4">
                   <label className="label"><span className="label-text flex items-center gap-2"><FiPhone /> Phone</span></label>
-                  <input type="tel" className="input input-bordered" value={orderForm.phone} onChange={(e) => setOrderForm({ ...orderForm, phone: e.target.value })} required />
+                  <input type="tel" className="input input-bordered w-full" value={orderForm.phone} onChange={(e) => setOrderForm({ ...orderForm, phone: e.target.value })} required />
                 </div>
                 <div className="form-control mb-6">
                   <label className="label"><span className="label-text flex items-center gap-2"><FiMapPin /> Address</span></label>
-                  <textarea className="textarea textarea-bordered h-24" value={orderForm.address} onChange={(e) => setOrderForm({ ...orderForm, address: e.target.value })} required />
+                  <textarea className="textarea textarea-bordered w-full h-24" value={orderForm.address} onChange={(e) => setOrderForm({ ...orderForm, address: e.target.value })} required />
                 </div>
                 <div className="modal-action">
                   <button type="submit" className="btn btn-primary">Place Order (৳{book.price})</button>

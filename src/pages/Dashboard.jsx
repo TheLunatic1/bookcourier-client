@@ -80,7 +80,7 @@ export default function Dashboard() {
       <div className="drawer-side">
         <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
         <div className="w-80 h-full bg-base-100 shadow-2xl">
-          <div className="p-8">
+          <div className="p-8 pt-20 lg:pt-8">
             {/* Close button on mobile */}
             <label htmlFor="dashboard-drawer" className="btn btn-circle btn-ghost absolute right-4 top-4 lg:hidden">
               <FiX className="w-6 h-6" />

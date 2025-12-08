@@ -113,7 +113,6 @@ export default function RequestDelivery() {
           <div className="max-w-6xl mx-auto">
             <div className="form-control mb-8">
               <div className="input-group input-group-lg">
-                <span><FiSearch /></span>
                 <input
                   type="text"
                   placeholder="Search by title or author..."

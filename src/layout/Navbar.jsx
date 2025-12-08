@@ -1,17 +1,27 @@
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { FiSun, FiMoon, FiMenu, FiLogOut } from "react-icons/fi";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const toggleTheme = () => {
-    const current = document.documentElement.getAttribute("data-theme") || "light";
-    const newTheme = current === "light" ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-  };
+
+const [theme, setTheme] = useState("light");
+
+useEffect(() => {
+  const savedTheme = localStorage.getItem("theme") || "light";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+  setTheme(savedTheme);
+}, []);
+
+const toggleTheme = () => {
+  const newTheme = theme === "light" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", newTheme);
+  localStorage.setItem("theme", newTheme);
+  setTheme(newTheme);
+};
 
   const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
 

@@ -88,16 +88,16 @@ const handleSubmit = async (e) => {
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Cover Image */}
               <div className="form-control">
-                <label className="label"><span className="label-text font-medium">Book Cover</span></label>
+                <label className="label"><span className="label-text font-medium w-full">Book Cover</span></label>
                 {!preview ? (
                   <label className="border-4 border-dashed border-base-300 rounded-xl w-full min-h-96 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition">
-                    <FiImage className="w-20 h-20 opacity-50 mb-4" />
+                    <FiImage className="w-20 h-20 opacity-50 mb-2 mt-10" />
                     <p className="text-lg mb-2">Click to upload image</p>
-                    <p className="text-sm opacity-70 mb-4">or</p>
+                    <p className="text-sm opacity-70 mb-2">or</p>
                     <button
                       type="button"
                       onClick={() => setShowUrlInput(true)}
-                      className="link link-primary flex items-center gap-2"
+                      className="link link-primary flex items-center gap-2 mb-15"
                     >
                       <FiLink className="w-5 h-5" />
                       Add from URL
@@ -106,7 +106,6 @@ const handleSubmit = async (e) => {
                   </label>
                 ) : (
                   <div className="relative">
-                    {/* Image with natural aspect ratio */}
                     <img 
                       src={preview} 
                       alt="Book cover" 
@@ -146,11 +145,11 @@ const handleSubmit = async (e) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="form-control">
-                  <label className="label"><span className="label-text font-medium">Book Title</span></label>
+                  <label className="label"><span className="label-text font-medium mr-2">Book Title</span></label>
                   <input
                     type="text"
                     placeholder="Enter book title"
-                    className="input input-bordered"
+                    className="input input-bordered w-full"
                     value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
                     required
@@ -158,11 +157,11 @@ const handleSubmit = async (e) => {
                 </div>
 
                 <div className="form-control">
-                  <label className="label"><span className="label-text font-medium">Author</span></label>
+                  <label className="label"><span className="label-text font-medium mr-2">Author</span></label>
                   <input
                     type="text"
                     placeholder="Author name"
-                    className="input input-bordered"
+                    className="input input-bordered w-full"
                     value={form.author}
                     onChange={(e) => setForm({ ...form, author: e.target.value })}
                     required
@@ -172,15 +171,15 @@ const handleSubmit = async (e) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="form-control">
-                  <label className="label"><span className="label-text font-medium flex items-center gap-2">
-                    <FiDollarSign /> Price (৳)
+                  <label className="label mr-5"><span className="label-text font-medium flex items-center gap-2">
+                    Price (৳)
                   </span></label>
                   <input
                     type="number"
                     min="0"
                     step="10"
                     placeholder="150"
-                    className="input input-bordered"
+                    className="input input-bordered w-full"
                     value={form.price}
                     onChange={(e) => setForm({ ...form, price: e.target.value })}
                     required
@@ -188,9 +187,9 @@ const handleSubmit = async (e) => {
                 </div>
 
                 <div className="form-control">
-                  <label className="label"><span className="label-text font-medium">Category</span></label>
+                  <label className="label"><span className="label-text font-medium mr-2">Category</span></label>
                   <select
-                    className="select select-bordered"
+                    className="select select-bordered  w-full"
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
                   >
@@ -205,9 +204,9 @@ const handleSubmit = async (e) => {
               </div>
 
               <div className="form-control">
-                <label className="label"><span className="label-text font-medium">Description (Optional)</span></label>
+                <label className="label"><span className="label-text font-medium mr-2">Description</span></label>
                 <textarea
-                  className="textarea textarea-bordered h-32"
+                  className="textarea textarea-bordered h-20 w-full"
                   placeholder="Write something about the book..."
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
