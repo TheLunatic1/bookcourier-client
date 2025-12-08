@@ -26,31 +26,29 @@ export default function Login() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      // Get data safely
-      const displayName = user.displayName || "User";
+    
+      const displayName = user.displayName || user.email?.split("@")[0] || "User";
       const email = user.email;
-      const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6366f1&color=fff`;
-
+      const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}`;
+    
       if (!email) {
-        toast.error("Google login failed: Email not available");
+        toast.error("Google login failed: No email");
         return;
       }
-
+    
       const res = await API.post("/users/google-login", {
         name: displayName,
         email,
         photoURL,
       });
-
+    
       const { token, ...userData } = res.data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       toast.success(`Welcome, ${displayName.split(" ")[0]}!`);
       navigate("/dashboard");
     } catch (err) {
-      console.error("Google login error:", err);
-      toast.error("Google login failed. Try again or use email/password.");
+      toast.error("Google login failed");
     }
   };
 

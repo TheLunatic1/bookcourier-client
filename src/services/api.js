@@ -5,7 +5,7 @@ const API = axios.create({
   withCredentials: true,
 });
 
-// CRITICAL: Send token with every request
+// Send token with every request
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -14,7 +14,7 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Add response interceptor to catch errors
+// Response interceptor to catch errors
 API.interceptors.response.use(
   (response) => response,
   (error) => {
