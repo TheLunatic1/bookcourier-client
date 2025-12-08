@@ -28,28 +28,23 @@ export default function AdminUsers() {
   const handleRoleChange = async (userId, newRole, currentRole) => {
     try {
       if (newRole === "librarian" && currentRole === "user") {
-        // Promote user → librarian
         await API.patch(`/admin/make-librarian/${userId}`);
-        toast.success("User promoted to librarian!");
+        toast.success("Promoted to librarian!");
       } 
       else if (newRole === "user" && currentRole === "librarian") {
-        // Downgrade librarian → user
-        await API.patch(`/admin/reject-librarian/${userId}`);
-        toast.success("Librarian downgraded to user");
-      } 
-      else if (newRole === currentRole) {
-        return;
+        await API.patch(`/admin/downgrade-librarian/${userId}`);
+        toast.success("Downgraded to user");
       } 
       else {
-        toast.error("Invalid role change");
+        toast.error("Invalid action");
         return;
       }
 
-      // Refresh user list
+      // Refresh list
       const res = await API.get("/admin/users");
       setUsers(res.data);
     } catch (err) {
-      toast.error("Role change failed");
+      toast.error("Failed");
     }
   };
 
