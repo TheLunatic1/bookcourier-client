@@ -57,8 +57,7 @@ export default function BookDetails() {
       toast.success("Order placed successfully!");
       setShowModal(false);
       
-      // FIXED: No more 404
-      navigate("/dashboard/orders"); // ← Correct redirect
+      navigate("/dashboard/orders");
     } catch (err) {
       toast.error("Order failed");
     }
