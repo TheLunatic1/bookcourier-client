@@ -25,13 +25,31 @@ export default function AdminUsers() {
     if (user?.role === "admin") fetchUsers();
   }, [user]);
 
-  const handleRoleChange = async (userId, newRole) => {
+  const handleRoleChange = async (userId, newRole, currentRole) => {
     try {
-      await API.patch(`/admin/user/${userId}/role`, { role: newRole });
-      setUsers(prev => prev.map(u => u._id === userId ? { ...u, role: newRole } : u));
-      toast.success("Role updated!");
+      if (newRole === "librarian" && currentRole === "user") {
+        // Promote user → librarian
+        await API.patch(`/admin/make-librarian/${userId}`);
+        toast.success("User promoted to librarian!");
+      } 
+      else if (newRole === "user" && currentRole === "librarian") {
+        // Downgrade librarian → user
+        await API.patch(`/admin/reject-librarian/${userId}`);
+        toast.success("Librarian downgraded to user");
+      } 
+      else if (newRole === currentRole) {
+        return;
+      } 
+      else {
+        toast.error("Invalid role change");
+        return;
+      }
+
+      // Refresh user list
+      const res = await API.get("/admin/users");
+      setUsers(res.data);
     } catch (err) {
-      toast.error("Update failed");
+      toast.error("Role change failed");
     }
   };
 
@@ -121,11 +139,12 @@ export default function AdminUsers() {
                         <select
                           className="select select-bordered select-sm w-full max-w-xs"
                           value={u.role}
-                          onChange={(e) => handleRoleChange(u._id, e.target.value)}
+                          onChange={(e) => handleRoleChange(u._id, e.target.value, u.role)}
+                          disabled={u.role === "admin"}
                         >
                           <option value="user">User</option>
                           <option value="librarian">Librarian</option>
-                          <option value="admin">Admin</option>
+                          <option value="admin" disabled>Admin</option>
                         </select>
                       </td>
                       <td>
