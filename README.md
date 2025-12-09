@@ -8,8 +8,8 @@
 ![BookCourier Preview](https://i.imgur.com/0jo4Fj9.png)
 
 - Lighthouse Report
-![Desktop](https://i.imgur.com/dk1971j.png)
-![Mobile](https://i.imgur.com/uu28Cn0.png)
+- ![Desktop](https://i.imgur.com/dk1971j.png)
+- ![Mobile](https://i.imgur.com/uu28Cn0.png)
 
 ### ✨ Key Features
 - Role-based authentication (User, Librarian, Admin) with JWT and Firebase
