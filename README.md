@@ -8,7 +8,9 @@
 ![BookCourier Preview](https://i.imgur.com/0jo4Fj9.png)
 
 - Lighthouse Report
+- Desktop
 - ![Desktop](https://i.imgur.com/dk1971j.png)
+- Mobile
 - ![Mobile](https://i.imgur.com/uu28Cn0.png)
 
 ### ✨ Key Features
