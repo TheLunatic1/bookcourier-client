@@ -1,10 +1,11 @@
-## BookCourier – Library-to-Home Delivery System <img src="https://i.imgur.com/kQ4ngAc.png" alt="Book Icon" width="35" height="35" />
+## BookCourier – Library-to-Home Delivery System <img src="https://i.imgur.com/kQ4ngAc.png" alt="Book Icon" width="70" height="35" />
 
 **A full-stack book delivery management system** where users browse books, request deliveries, librarians add/manage books, and admins control the platform. Features role-based auth, Stripe payments, Google login, reviews, wishlist, and more.
 
 🔥 **Live Demo**: [https://bookcourier-client.vercel.app](https://bookcourier-client.vercel.app/)
 
-![BookCourier Preview](https://i.imgur.com/kQ4ngAc.png)
+
+![BookCourier Preview](https://i.imgur.com/0jo4Fj9.png)
 
 ### ✨ Key Features
 - Role-based authentication (User, Librarian, Admin) with JWT and Firebase
@@ -50,7 +51,7 @@
 ### 🚀 How to Run Locally
 
 #### Client (Frontend)
-```bash
+```
 git clone https://github.com/TheLunatic1/bookcourier-client.git
 cd bookcourier-client
 npm install
