@@ -160,7 +160,7 @@ export default function Home() {
       <section className="py-20 bg-base-100">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">Latest Books</h2>
-
+                      
           {loading ? (
             <div className="text-center py-20">
               <span className="loading loading-spinner loading-lg"></span>
@@ -171,34 +171,34 @@ export default function Home() {
             </div>
           ) : (
             <Swiper
-              modules={[Autoplay, Pagination, Navigation]}
-              spaceBetween={40}
-              slidesPerView={1.5}
-              centeredSlides={true}
+              modules={[Autoplay, Pagination]}
+              spaceBetween={30}
+              slidesPerView={1.3}
+              centeredSlides={false}
               autoplay={{ delay: 3000, disableOnInteraction: false }}
               loop={true}
               pagination={{ clickable: true }}
-              navigation={true}
               grabCursor={true}
               breakpoints={{
-                640: { slidesPerView: 2, spaceBetween: 30, centeredSlides: false },
-                768: { slidesPerView: 3, spaceBetween: 35 },
-                1024: { slidesPerView: 4, spaceBetween: 40 },
+                640: { slidesPerView: 2, centeredSlides: false },
+                768: { slidesPerView: 3, centeredSlides: false },
+                1024: { slidesPerView: 4, centeredSlides: false },
+                1280: { slidesPerView: 5, centeredSlides: false },
               }}
-              className="latest-books-swiper"
+              className="latest-books-swiper pb-12"
             >
               {latestBooks.map((book) => (
-                <SwiperSlide key={book._id}>
+                <SwiperSlide key={book._id} className="!w-80 md:!w-96">
                   <Link to={`/book/${book._id}`} className="block h-full">
                     <div className="card bg-base-200 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 rounded-3xl overflow-hidden h-full flex flex-col border border-base-300">
-                      <figure className="px-10 pt-10">
+                      <figure className="px-8 pt-8">
                         <img
                           src={book.coverImage}
                           alt={book.title}
-                          className="rounded-2xl h-96 w-full object-cover shadow-2xl border-4 border-white"
+                          className="rounded-2xl h-80 w-full object-cover shadow-2xl border-4 border-white"
                         />
                       </figure>
-                      <div className="card-body p-8 text-center flex flex-col justify-between flex-1 bg-linear-to-b from-base-200 to-base-300">
+                      <div className="card-body p-8 text-center flex flex-col justify-between flex-1 bg-gradient-to-b from-base-200 to-base-300">
                         <div>
                           <h3 className="font-bold text-2xl line-clamp-2 leading-tight text-primary">
                             {book.title}

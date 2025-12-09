@@ -41,11 +41,10 @@ export default function AdminOrders() {
   return (
     <div className="min-h-screen bg-base-200 py-12">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-12">All Orders (Admin View)</h1>
+        <h1 className="text-4xl font-bold text-center mb-12">All Orders (Admin)</h1>
 
         {orders.length === 0 ? (
           <div className="text-center py-20">
-            <FiPackage className="w-32 h-32 mx-auto opacity-20 mb-6" />
             <p className="text-2xl opacity-70">No orders yet</p>
           </div>
         ) : (
@@ -53,10 +52,8 @@ export default function AdminOrders() {
             <table className="table table-zebra w-full">
               <thead>
                 <tr>
-                  <th>Order ID</th>
+                  <th>Order</th>
                   <th>User</th>
-                  <th>Book</th>
-                  <th>Amount</th>
                   <th>Status</th>
                   <th>Date</th>
                 </tr>
@@ -64,26 +61,31 @@ export default function AdminOrders() {
               <tbody>
                 {orders.map((order) => (
                   <tr key={order._id}>
-                    <td className="font-mono text-sm">#{order._id.slice(-6)}</td>
                     <td>
-                      <div className="flex items-center gap-3">
-                        <FiUser />
+                      <div className="flex items-center gap-4">
+                        <img src={order.bookCover} alt={order.bookTitle} className="w-20 h-28 object-cover rounded" />
                         <div>
-                          <div className="font-bold">{order.user?.name || "Unknown"}</div>
-                          <div className="text-sm opacity-70">{order.user?.email}</div>
+                          <div className="font-bold">{order.bookTitle}</div>
+                          <div className="text-sm opacity-70">Delivery to {order.deliveryAddress}</div>
+                          <div className="mt-2">
+                            <div className="flex items-center gap-2 text-primary">
+                              
+                              <div>
+                                Book: ৳{order.price}
+                                <br />
+                                Delivery: ৳150
+                                <br />
+                                Total: ৳{order.price + 150}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <div>
-                        <div className="font-bold">{order.book?.title || "Unknown"}</div>
-                        <div className="text-sm opacity-70">by {order.book?.author}</div>
-                      </div>
-                    </td>
-                    <td>
                       <div className="flex items-center gap-2">
-                        <FiDollarSign />
-                        <span className="font-bold">৳150</span>
+                        <FiUser />
+                        {order.user.name}
                       </div>
                     </td>
                     <td>

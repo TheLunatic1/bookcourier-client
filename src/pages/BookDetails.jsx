@@ -17,6 +17,37 @@ export default function BookDetails() {
   const [orderForm, setOrderForm] = useState({ phone: "", address: "" });
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
+  const [isInWishlist, setIsInWishlist] = useState(false);
+
+  useEffect(() => {
+    const checkWishlist = async () => {
+      if (user) {
+        try {
+          const res = await API.get("/wishlist");
+          setIsInWishlist(res.data.books.some(b => b._id === id));
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+    checkWishlist();
+  }, [user, id]);
+
+  const toggleWishlist = async () => {
+    try {
+      if (isInWishlist) {
+        await API.delete(`/wishlist/${id}`);
+        setIsInWishlist(false);
+        toast.success("Removed from wishlist");
+      } else {
+        await API.post("/wishlist", { bookId: id });
+        setIsInWishlist(true);
+        toast.success("Added to wishlist");
+      }
+    } catch (err) {
+      toast.error("Wishlist update failed");
+    }
+  };
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -103,7 +134,10 @@ export default function BookDetails() {
                   <div className={`badge badge-lg ${book.isAvailable ? "badge-success" : "badge-error"} gap-2`}>
                     {book.isAvailable ? "Available" : "Not Available"}
                   </div>
-                  <button className="btn btn-circle btn-outline">
+                  <button 
+                    onClick={toggleWishlist}
+                    className={`btn btn-circle ${isInWishlist ? "btn-error" : "btn-outline"}`}
+                  >
                     <FiHeart className="w-6 h-6" />
                   </button>
                 </div>
@@ -135,15 +169,29 @@ export default function BookDetails() {
                   </div>
                 )}
 
-                <div className="flex gap-4 mt-10">
-                  {book.isAvailable ? (
-                    <button onClick={() => setShowModal(true)} className="btn btn-primary btn-lg flex-1">
-                      Order Now (৳{book.price})
-                    </button>
-                  ) : (
-                    <button className="btn btn-disabled btn-lg flex-1" disabled>
-                      Currently Unavailable
-                    </button>
+                <div className="mt-10">
+                  {/* ORDER BUTTON */}
+                  {book.isAvailable && user?.role === "user" && (
+                    <div className="flex gap-4">
+                      <button onClick={() => setShowModal(true)} className="btn btn-primary btn-lg flex-1">
+                        Order Now (৳{book.price})
+                      </button>
+                    </div>
+                  )}
+
+                  {book.isAvailable && user && user.role !== "user" && (
+                    <div className="alert alert-info mt-6">
+                      <span>Only customers can place orders</span>
+                    </div>
+                  )}
+
+                  {/* If book not available */}
+                  {!book.isAvailable && (
+                    <div className="flex gap-4">
+                      <button className="btn btn-disabled btn-lg flex-1" disabled>
+                        Currently Unavailable
+                      </button>
+                    </div>
                   )}
                 </div>
 

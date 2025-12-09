@@ -50,18 +50,19 @@ export default function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      const res = await API.patch("/users/profile", {
-        name,
-        photoURL,
-      });
-      const updatedUser = { ...user, name, photoURL };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      const res = await API.patch("/users/profile", { name, photoURL });
+      const updatedUser = res.data;
+
       setUser(updatedUser);
-      toast.success("Profile updated successfully!");
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      toast.success("Profile updated!");
+
     } catch (err) {
       toast.error("Update failed");
     }
+
     setLoading(false);
   };
 
