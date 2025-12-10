@@ -103,7 +103,7 @@ export default function Profile() {
                     <div className="flex gap-2 max-w-sm">
                       <input
                         type="url"
-                        placeholder="https://example.com/photo.jpg"
+                        placeholder="https://avatar.iran.liara.run/public"
                         className="input input-bordered flex-1"
                         value={urlInput}
                         onChange={(e) => setUrlInput(e.target.value)}
