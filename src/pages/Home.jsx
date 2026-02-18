@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Link } from "react-router-dom";
 import API from "../services/api";
-import { FiArrowRight, FiCheckCircle, FiTruck, FiBookOpen, FiClock } from "react-icons/fi";
+import { FiArrowRight, FiCheckCircle, FiTruck, FiBookOpen, FiClock, FiDollarSign } from "react-icons/fi";
 import useAuth from "../hooks/useAuth";
 
-// Leaflet icon
+// Leaflet icon fix
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -21,6 +21,7 @@ L.Icon.Default.mergeOptions({
 });
 
 export default function Home() {
+  const { user } = useAuth();
   const [latestBooks, setLatestBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,14 +29,13 @@ export default function Home() {
     const fetchLatestBooks = async () => {
       try {
         const res = await API.get("/books");
-        // Get available books, sort by newest, take 6
-        const available = res.data
+        const sorted = res.data
           .filter(book => book.isAvailable)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 6);
-        setLatestBooks(available);
+        setLatestBooks(sorted);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load latest books:", err);
       } finally {
         setLoading(false);
       }
@@ -43,269 +43,257 @@ export default function Home() {
     fetchLatestBooks();
   }, []);
 
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 80 },
+    visible: { opacity: 1, y: 0, transition: { duration: 1, ease: "easeOut" } },
+  };
 
-  const cities = [
-    { name: "Dhaka", position: [23.8103, 90.4125] },
-    { name: "Chittagong", position: [22.3569, 91.7832] },
-    { name: "Sylhet", position: [24.8949, 91.8687] },
-    { name: "Khulna", position: [22.8456, 89.5403] },
-  ];
+  const scaleHover = {
+    rest: { scale: 1, rotate: 0 },
+    hover: { scale: 1.08, rotate: 1, transition: { duration: 0.4 } },
+  };
 
-  const { user } = useAuth();
+  const staggerContainer = {
+    hidden: { opacity: 1 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.3 } },
+  };
+
+  const pulse = {
+    scale: [1, 1.05, 1],
+    transition: { duration: 2, repeat: Infinity, repeatType: "reverse" },
+  };
 
   return (
-    <div className="min-h-screen bg-base-200">
+    <div className="min-h-screen bg-base-200 overflow-x-hidden">
 
-      {/* HERO SLIDER */}
-      <section className="relative">
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          navigation={true}
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
-          loop={true}
-          className="h-screen"
-        >
-          {/* SLIDE 1 */}
-          <SwiperSlide>
-            <div className="hero h-full bg-linear-to-br from-blue-600 to-indigo-700">
-              <div className="hero-overlay bg-black/60"></div>
-              <div className="hero-content text-center text-white">
-                <div className="max-w-5xl">
-                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
-                    Books Delivered
-                    <span className="block text-cyan-300 mt-4">to Your Doorstep</span>
-                  </h1>
-                  <p className="text-xl md:text-3xl mb-12 font-light opacity-95 max-w-3xl mx-auto">
-                    Borrow from local libraries — delivered in 48 hours for just ৳150
-                  </p>
-                  <Link to="/all-books" className="btn btn-info btn-lg text-xl px-12 shadow-2xl hover:shadow-info/50">
-                    Browse Books
-                    <FiArrowRight className="ml-3 w-6 h-6" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </SwiperSlide>
+{/* HERO — BIG SINGLE HERO, TEXT ALIGNED LEFT */}
+<section className="relative h-screen flex items-center justify-start overflow-hidden">
+  {/* Gradient Overlay — stronger for readability */}
+  {/* <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent z-10" /> */}
 
-          {/* SLIDE 2 */}
-          <SwiperSlide>
-            <div className="hero h-full bg-linear-to-br from-indigo-700 to-purple-700">
-              <div className="hero-overlay bg-black/60"></div>
-              <div className="hero-content text-center text-white">
-                <div className="max-w-5xl">
-                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
-                    1000+ Books
-                    <span className="block text-cyan-300 mt-4">Ready to Borrow</span>
-                  </h1>
-                  <p className="text-xl md:text-3xl mb-12 font-light opacity-95 max-w-3xl mx-auto">
-                    From classics to bestsellers — all from trusted libraries near you
-                  </p>
-                  <Link to="/all-books" className="btn btn-info btn-lg text-xl px-12 shadow-2xl hover:shadow-info/50">
-                    Explore Now
-                    <FiArrowRight className="ml-3 w-6 h-6" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </SwiperSlide>
+  {/* Your Background Image */}
+  <div
+    className="absolute inset-0 bg-cover bg-center scale-101"
+    style={{
+      backgroundImage: "url('https://i.imgur.com/HgqtGYQ.jpeg')",
+      // filter: "brightness(0.45) contrast(1.15)",
+    }}
+  />
 
-          {/* SLIDE 3 */}
-          <SwiperSlide>
-            <div className="hero h-full bg-linear-to-br from-purple-700 to-pink-700">
-              <div className="hero-overlay bg-black/60"></div>
-              <div className="hero-content text-center text-white">
-                <div className="max-w-5xl">
-                  {user ? (
-                    <>
-                      <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
-                        Welcome Back,
-                        <span className="block text-cyan-300 mt-4">{user.name.split(" ")[0]}!</span>
-                      </h1>
-                      <p className="text-xl md:text-3xl mb-12 font-light opacity-95 max-w-3xl mx-auto">
-                        Your next great read is waiting
-                      </p>
-                      <Link to="/dashboard" className="btn btn-info btn-lg text-xl px-12 shadow-2xl hover:shadow-info/50">
-                        Go to Dashboard
-                        <FiArrowRight className="ml-3 w-6 h-6" />
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
-                        Join BookCourier
-                        <span className="block text-cyan-300 mt-4">Today</span>
-                      </h1>
-                      <p className="text-xl md:text-3xl mb-12 font-light opacity-95 max-w-3xl mx-auto">
-                        Start your reading journey in seconds
-                      </p>
-                      <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                        <Link to="/register" className="btn btn-info btn-lg text-xl px-12 shadow-2xl hover:shadow-info/50">
-                          Register Now
-                        </Link>
-                        <Link to="/login" className="btn btn-ghost btn-lg text-xl px-12 border-2 border-white/30 hover:border-white">
-                          Login
-                        </Link>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </SwiperSlide>
-        </Swiper>
-      </section>
-                
-      {/* LATEST BOOKS */}
-      <section className="py-20 bg-base-100">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">Latest Books</h2>
-                      
-          {loading ? (
-            <div className="text-center py-20">
-              <span className="loading loading-spinner loading-lg"></span>
-            </div>
-          ) : latestBooks.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-2xl opacity-70">No books available yet</p>
-            </div>
-          ) : (
-            <Swiper
-              modules={[Autoplay, Pagination]}
-              spaceBetween={30}
-              slidesPerView={1.3}
-              centeredSlides={false}
-              autoplay={{ delay: 3000, disableOnInteraction: false }}
-              loop={true}
-              pagination={{ clickable: true }}
-              grabCursor={true}
-              breakpoints={{
-                640: { slidesPerView: 2, centeredSlides: false },
-                768: { slidesPerView: 3, centeredSlides: false },
-                1024: { slidesPerView: 4, centeredSlides: false },
-                1280: { slidesPerView: 5, centeredSlides: false },
-              }}
-              className="latest-books-swiper pb-12"
-            >
-              {latestBooks.map((book) => (
-                <SwiperSlide key={book._id} className="!w-80 md:!w-96">
-                  <Link to={`/book/${book._id}`} className="block h-full">
-                    <div className="card bg-base-200 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 rounded-3xl overflow-hidden h-full flex flex-col border border-base-300">
-                      <figure className="px-8 pt-8">
-                        <img
-                          src={book.coverImage}
-                          alt={book.title}
-                          className="rounded-2xl h-80 w-full object-cover shadow-2xl border-4 border-white"
-                        />
-                      </figure>
-                      <div className="card-body p-8 text-center flex flex-col justify-between flex-1 bg-gradient-to-b from-base-200 to-base-300">
-                        <div>
-                          <h3 className="font-bold text-2xl line-clamp-2 leading-tight text-primary">
-                            {book.title}
-                          </h3>
-                          <p className="text-lg opacity-90 mt-3 font-medium">by {book.author}</p>
-                        </div>
-                        <div className="mt-6">
-                          <div className="badge badge-success badge-lg py-5 px-8 text-lg font-bold">
-                            ৳{book.price}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          )}
-        </div>
-      </section>
+  {/* Animated Hero Content — LEFT ALIGNED */}
+  <motion.div
+    className="relative z-20 text-left max-w-5xl ml-6 md:ml-12 lg:ml-24 px-6 md:px-12"
+    initial="hidden"
+    animate="visible"
+    variants={staggerContainer}
+  >
+    <motion.h1
+      variants={fadeInUp}
+      className="text-5xl md:text-7xl lg:text-9xl font-black text-white mb-8 leading-tight drop-shadow-[0_6px_12px_rgba(0,0,0,0.9)]"
+    >
+      Discover & Deliver
+      <motion.span
+        variants={fadeInUp}
+        className="block text-accent mt-4 md:mt-6 text-6xl md:text-8xl lg:text-9xl drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
+      >
+        Your Next Read
+      </motion.span>
+    </motion.h1>
 
-      {/* WHY CHOOSE US */}
-      <section className="py-20 bg-base-100">
-        <div className="container mx-auto px-4">
-          <h2 className="text-5xl font-bold text-center mb-16 bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+    <motion.p
+      variants={fadeInUp}
+      className="text-xl md:text-2xl lg:text-3xl text-white/95 mb-10 lg:mb-14 font-light max-w-3xl drop-shadow-[0_3px_6px_rgba(0,0,0,0.8)]"
+    >
+      Borrow or buy from local libraries — delivered to your doorstep in 48 hours for just ৳150
+    </motion.p>
+
+    <motion.div variants={fadeInUp}>
+      <Link
+        to="/all-books"
+        className="btn btn-accent btn-lg text-xl md:text-2xl px-10 md:px-14 py-6 md:py-8 shadow-2xl hover:shadow-accent/60 hover:scale-105 transition-all duration-500"
+      >
+        Browse Books Now
+        <FiArrowRight className="ml-3 md:ml-4 w-6 md:w-8 h-6 md:h-8" />
+      </Link>
+    </motion.div>
+  </motion.div>
+</section>
+      {/* WHY CHOOSE US — ANIMATED CARDS */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={staggerContainer}
+        className="py-24 bg-base-200"
+      >
+        <div className="container mx-auto px-6">
+          <motion.h2
+            variants={fadeInUp}
+            className="text-5xl font-black text-center mb-20 text-primary"
+          >
             Why Choose BookCourier?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
-            <div className="text-center group">
-              <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition">
-                <FiTruck className="w-12 h-12 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Lightning Fast Delivery</h3>
-              <p className="text-base-content/70 text-lg">
-                Get your favorite books delivered within <strong>48 hours</strong> — faster than you can finish a chapter!
-              </p>
-            </div>
-              
-            <div className="text-center group">
-              <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-success/10 flex items-center justify-center group-hover:bg-success/20 transition">
-                <FiCheckCircle className="w-12 h-12 text-success" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Trusted Local Libraries</h3>
-              <p className="text-base-content/70 text-lg">
-                Every book comes from verified libraries near you — quality and authenticity guaranteed.
-              </p>
-            </div>
-              
-            <div className="text-center group">
-              <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition">
-                <FiClock className="w-12 h-12 text-accent" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">24/7 Support & Easy Returns</h3>
-              <p className="text-base-content/70 text-lg">
-                We're here whenever you need us. Not happy? Return it free within 7 days.
-              </p>
-            </div>
+          </motion.h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            {[
+              { icon: FiTruck, title: "Lightning Fast Delivery", desc: "48 hours or less — guaranteed" },
+              { icon: FiCheckCircle, title: "Trusted Libraries", desc: "Only verified partners" },
+              { icon: FiDollarSign, title: "Flat ৳150 Delivery", desc: "No hidden fees" },
+              { icon: FiBookOpen, title: "Vast Collection", desc: "Thousands of titles" },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                variants={scaleHover}
+                initial="rest"
+                whileHover="hover"
+                className="card bg-base-100 shadow-2xl hover:shadow-3xl transition-shadow duration-500 rounded-3xl overflow-hidden border border-base-300"
+              >
+                <div className="card-body items-center text-center p-10">
+                  <item.icon className="w-16 h-16 text-primary mb-6" />
+                  <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
+                  <p className="text-lg opacity-80">{item.desc}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
-      </section>
-              
-      {/* COVERAGE MAP */}
-      <section className="py-20 bg-linear-to-b from-base-200 to-base-300">
-        <div className="container mx-auto px-4">
-          <h2 className="text-5xl font-bold text-center mb-4">We Deliver Across Bangladesh</h2>
-          <p className="text-xl text-center opacity-80 mb-12 max-w-2xl mx-auto">
-            From Dhaka to the hills of Sylhet — if you're in a major city, we're coming to you!
-          </p>
-              
-          <div className="max-w-5xl mx-auto h-96 rounded-3xl overflow-hidden shadow-2xl border-4 border-primary/20">
-            <MapContainer center={[23.685, 90.3563]} zoom={6} style={{ height: "100%", width: "100%" }}>
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='© OpenStreetMap contributors'
+      </motion.section>
+
+{/* LATEST BOOKS — HOVER SHOWS FULL IMAGE + DESCRIPTION PANEL */}
+<motion.section
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, amount: 0.2 }}
+  variants={staggerContainer}
+  className="py-24 bg-base-100"
+>
+  <div className="container mx-auto px-6">
+    <motion.h2 variants={fadeInUp} className="text-5xl font-black text-center mb-20">
+      Latest Arrivals
+    </motion.h2>
+
+    {loading ? (
+      <div className="text-center py-20">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    ) : latestBooks.length === 0 ? (
+      <div className="text-center py-20">
+        <p className="text-2xl opacity-70">No books available yet</p>
+      </div>
+    ) : (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10">
+        {latestBooks.slice(0, 5).map((book, index) => (
+          <motion.div
+            key={book._id}
+            variants={scaleHover}
+            initial="rest"
+            whileHover="hover"
+            className="group relative card bg-base-200 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-3xl overflow-hidden h-full flex flex-col border border-base-300 cursor-pointer"
+          >
+            <Link to={`/book/${book._id}`} className="block h-full">
+            {/* Card Content */}
+            <figure className="px-8 pt-8 relative z-10">
+              <img
+                src={book.coverImage}
+                alt={book.title}
+                className="rounded-2xl h-80 w-full object-cover shadow-2xl border-4 border-white transition-transform duration-700 group-hover:scale-110"
               />
-              {cities.map((city) => (
-                <Marker key={city.name} position={city.position}>
-                  <Popup>
-                    <div className="text-center">
-                      <h3 className="font-bold text-lg">{city.name}</h3>
-                      <p className="text-sm">Delivery Available</p>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
-            </MapContainer>
-          </div>
-            
-          <div className="text-center mt-12">
-            <p className="text-lg opacity-80">
-              Serving <strong>10+ major cities</strong> and expanding every month!
-            </p>
-          </div>
-        </div>
-      </section>
+            </figure>
+
+            {/* Hover Overlay with Description */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 flex flex-col justify-end p-8">
+              <h3 className="text-2xl font-bold text-white mb-3 line-clamp-2">
+                {book.title}
+              </h3>
+              <p className="text-lg text-white/90 mb-4">by {book.author}</p>
+              <p className="text-base text-white/80 line-clamp-3 mb-6">
+                {book.description || "A captivating read from our trusted library partners. Available for immediate delivery."}
+              </p>
+              <div className="flex items-center justify-between">
+                <div className="badge badge-success badge-lg py-4 px-6 text-lg font-bold">
+                  ৳{book.price}
+                </div>
+                <Link
+                  to={`/book/${book._id}`}
+                  className="btn btn-accent btn-sm px-3 "
+                >
+                  View Details
+                </Link>
+              </div>
+            </div>
+
+            {/* Default visible info (bottom) */}
+            <div className="card-body p-6 text-center relative z-10 bg-gradient-to-t from-base-200/80 to-transparent">
+              <h3 className="font-bold text-xl line-clamp-1 text-primary group-hover:opacity-0 transition-opacity duration-300">
+                {book.title}
+              </h3>
+              <p className="text-base opacity-80 group-hover:opacity-0 transition-opacity duration-300">
+                by {book.author}
+              </p>
+              <div className="mt-4">
+                <div className="badge badge-success badge-md py-3 px-6">
+                  ৳{book.price}
+                </div>
+              </div>
+            </div>
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+    )}
+  </div>
+</motion.section>
 
       {/* ANIMATED CTA */}
-      <section className="py-20 bg-linear-to-r from-primary to-secondary text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-5xl font-bold mb-8 animate-pulse">Join 10,000+ Happy Readers</h2>
-          <p className="text-2xl mb-12 opacity-90">Start your reading journey today!</p>
-          <Link to="/all-books" className="btn btn-lg btn-accent animate-bounce">
-            <FiBookOpen className="mr-2" />
-            Browse Books Now
-          </Link>
+      <motion.section
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2 }}
+        viewport={{ once: true }}
+        className="py-32 text-white text-center relative overflow-hidden"
+      >
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(255,255,255,0.1)_0%,transparent_50%)]"
+          style={{
+      backgroundImage: "url('https://i.imgur.com/nqebE69.jpeg')",
+      // filter: "brightness(0.45) contrast(1.15)",
+    }}
+          />
         </div>
-      </section>
+
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.h2
+            initial={{ y: 50, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 1 }}
+            className="text-6xl font-black mb-10 drop-shadow-[0_6px_12px_rgba(0,0,0,0.9)]"
+          >
+            Join 10,000+ Happy Readers
+          </motion.h2>
+          <motion.p
+            initial={{ y: 50, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 1 }}
+            className="text-3xl mb-14 font-light max-w-4xl mx-auto drop-shadow-[0_3px_6px_rgba(0,0,0,0.8)]"
+          >
+            Start your reading journey today!
+          </motion.p>
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          >
+            <Link
+              to="/all-books"
+              className="btn btn-accent btn-lg text-2xl px-16 py-8 shadow-2xl hover:shadow-accent/60 animate-pulse"
+            >
+              <FiBookOpen className="mr-4 w-8 h-8" />
+              Browse Books Now
+            </Link>
+          </motion.div>
+        </div>
+      </motion.section>
     </div>
   );
 }
