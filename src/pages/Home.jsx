@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import API from "../services/api";
 import { FiArrowRight, FiCheckCircle, FiTruck, FiBookOpen, FiClock, FiDollarSign } from "react-icons/fi";
 import useAuth from "../hooks/useAuth";
+import CountUp from "react-countup";
 
 // Leaflet icon fix
 delete L.Icon.Default.prototype._getIconUrl;
@@ -81,7 +82,7 @@ export default function Home() {
     }}
   />
 
-  {/* Animated Hero Content — LEFT ALIGNED */}
+{/* Animated Hero Content — LEFT ALIGNED */}
   <motion.div
     className="relative z-20 text-left max-w-5xl ml-6 md:ml-12 lg:ml-24 px-6 md:px-12"
     initial="hidden"
@@ -119,7 +120,10 @@ export default function Home() {
     </motion.div>
   </motion.div>
 </section>
-      {/* WHY CHOOSE US — ANIMATED CARDS */}
+
+
+
+ {/* WHY CHOOSE US — ANIMATED CARDS */}
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -159,6 +163,53 @@ export default function Home() {
           </div>
         </div>
       </motion.section>
+
+
+{/* NEW: STATS / TRUST BAR */}
+    <motion.section
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.8 }}
+      variants={staggerContainer}
+      className="py-16 bg-base-300 border-t border-base-200"
+    >
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {/* Stat 1 */}
+          <motion.div variants={fadeInUp} className="space-y-2">
+            <div className="text-5xl md:text-6xl font-black text-primary">
+              <CountUp end={10000} duration={2.5} separator="," />+
+            </div>
+            <p className="text-lg font-medium opacity-80">Happy Readers</p>
+          </motion.div>
+
+          {/* Stat 2 */}
+          <motion.div variants={fadeInUp} className="space-y-2">
+            <div className="text-5xl md:text-6xl font-black text-primary">
+              <CountUp end={500} duration={2.5} separator="," />+
+            </div>
+            <p className="text-lg font-medium opacity-80">Books Available</p>
+          </motion.div>
+
+          {/* Stat 3 */}
+          <motion.div variants={fadeInUp} className="space-y-2">
+            <div className="text-5xl md:text-6xl font-black text-primary">
+              48<span className="text-3xl">h</span>
+            </div>
+            <p className="text-lg font-medium opacity-80">Delivery Guarantee</p>
+          </motion.div>
+
+          {/* Stat 4 */}
+          <motion.div variants={fadeInUp} className="space-y-2">
+            <div className="text-5xl md:text-6xl font-black text-primary">
+              4.8<span className="text-3xl">/5</span>
+            </div>
+            <p className="text-lg font-medium opacity-80">Average Rating</p>
+          </motion.div>
+        </div>
+      </div>
+    </motion.section>
+
 
 {/* LATEST BOOKS — HOVER SHOWS FULL IMAGE + DESCRIPTION PANEL */}
 <motion.section
@@ -245,7 +296,199 @@ export default function Home() {
   </div>
 </motion.section>
 
-      {/* ANIMATED CTA */}
+
+{/* COVERAGE MAP - ALL 8 DIVISIONS, ZOOM LOCKED TO BANGLADESH */}
+<motion.section
+  initial={{ opacity: 0, y: 60 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1, ease: "easeOut" }}
+  viewport={{ once: true, amount: 0.3 }}
+  className="py-20 bg-base-200"
+>
+  <div className="container mx-auto px-6">
+    <motion.h2
+      className="text-5xl font-black text-center mb-16 text-primary"
+      initial={{ scale: 0.95 }}
+      whileInView={{ scale: 1 }}
+      transition={{ duration: 0.8 }}
+    >
+      Nationwide Coverage – All 8 Divisions
+    </motion.h2>
+
+    <div className="h-[500px] md:h-[600px] rounded-3xl overflow-hidden shadow-2xl border border-base-300">
+      <MapContainer
+        center={[23.6850, 90.3563]} // Approximate center of Bangladesh
+        zoom={7}
+        minZoom={7}                  // ← Prevent zooming out too far
+        maxZoom={10}                 // ← Limit max zoom
+        maxBounds={[
+          [20.34, 88.01],           // Southwest corner
+          [26.63, 92.67]            // Northeast corner (Bangladesh bounds)
+        ]}
+        maxBoundsViscosity={1.0}     // ← Hard lock — no panning outside
+        style={{ height: "100%", width: "100%" }}
+        className="z-10"
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+
+        {/* Markers for all 8 divisions (approx center coordinates) */}
+        <Marker position={[23.8103, 90.4125]}>
+          <Popup>Dhaka Division – Central Hub</Popup>
+        </Marker>
+        <Marker position={[22.3569, 91.7832]}>
+          <Popup>Chittagong Division – Port City</Popup>
+        </Marker>
+        <Marker position={[24.8949, 91.8687]}>
+          <Popup>Sylhet Division – Northeast</Popup>
+        </Marker>
+        <Marker position={[25.7466, 89.2516]}>
+          <Popup>Rangpur Division – North</Popup>
+        </Marker>
+        <Marker position={[24.3636, 88.6245]}>
+          <Popup>Rajshahi Division – Northwest</Popup>
+        </Marker>
+        <Marker position={[23.4607, 91.1809]}>
+          <Popup>Comilla Division (Chattogram Division part)</Popup>
+        </Marker>
+        <Marker position={[22.7010, 90.3535]}>
+          <Popup>Barishal Division – South</Popup>
+        </Marker>
+        <Marker position={[23.2378, 90.6563]}>
+          <Popup>Mymensingh Division – North-Central</Popup>
+        </Marker>
+      </MapContainer>
+    </div>
+
+    <motion.p
+      className="text-center mt-8 text-lg opacity-80 max-w-3xl mx-auto"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ delay: 0.5, duration: 0.8 }}
+    >
+      Currently serving all 8 divisions of Bangladesh — expanding to every district soon.
+    </motion.p>
+  </div>
+</motion.section>
+
+
+{/* TESTIMONIALS — AUTO-SCROLL CAROUSEL + RICH ANIMATIONS */}
+<motion.section
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, amount: 0.3 }}
+  variants={staggerContainer}
+  className="py-24 bg-base-100"
+>
+  <div className="container mx-auto px-6">
+    <motion.h2
+      variants={fadeInUp}
+      className="text-5xl font-black text-center mb-16 text-primary"
+    >
+      What Our Readers Say
+    </motion.h2>
+
+    <Swiper
+      modules={[Autoplay, Pagination]}
+      spaceBetween={30}
+      slidesPerView={1}
+      autoplay={{
+        delay: 5000,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      }}
+      loop={true}
+      pagination={{ clickable: true }}
+      grabCursor={true}
+      breakpoints={{
+        640: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 },
+      }}
+      className="testimonials-swiper pb-12"
+    >
+      {[
+        {
+          name: "Ayesha Rahman",
+          photo: "https://i.pravatar.cc/150?img=68",
+          rating: 5,
+          text: "Books arrived in just 36 hours — perfect condition! This service changed how I read. 100% recommend.",
+        },
+        {
+          name: "Rahim Khan",
+          photo: "https://i.pravatar.cc/150?img=12",
+          rating: 5,
+          text: "As a busy student, the flat ৳150 delivery is a lifesaver. Huge collection, easy app — love it!",
+        },
+        {
+          name: "Fatima Begum",
+          photo: "https://i.pravatar.cc/150?img=47",
+          rating: 5,
+          text: "First order was flawless. Librarians are super helpful, and the books are always fresh.",
+        },
+        {
+          name: "Samiul Islam",
+          photo: "https://i.pravatar.cc/150?img=33",
+          rating: 5,
+          text: "The app is easy to use and the customer support is quick. Got my favorite novel delivered in perfect time.",
+        },
+        {
+          name: "Nusrat Jahan",
+          photo: "https://i.pravatar.cc/150?img=55",
+          rating: 5,
+          text: "Finally an affordable way to enjoy new releases. 5 stars — can't wait for my next order!",
+        },
+      ].map((testimonial, index) => (
+        <SwiperSlide key={index}>
+          <motion.div
+            variants={scaleHover}
+            initial="rest"
+            whileHover="hover"
+            className="card bg-base-200 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-3xl overflow-hidden p-8 border border-base-300"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="avatar">
+                <div className="w-16 rounded-full ring ring-primary ring-offset-2 ring-offset-base-200">
+                  <img src={testimonial.photo} alt={testimonial.name} />
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-xl">{testimonial.name}</h4>
+                <div className="flex text-yellow-400 mt-1">
+                  {[...Array(5)].map((_, i) => (
+                    <motion.span
+                      key={i}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.6 + i * 0.1, duration: 0.4 }}
+                    >
+                      ★
+                    </motion.span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <p className="text-lg leading-relaxed opacity-90 italic">
+              "{testimonial.text}"
+            </p>
+          </motion.div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+
+    {/* Mobile swipe hint */}
+    <motion.p
+      variants={fadeInUp}
+      className="text-center mt-6 text-base opacity-70 md:hidden"
+    >
+      Swipe left/right to see more stories
+    </motion.p>
+  </div>
+</motion.section>
+
+{/* ANIMATED CTA */}
       <motion.section
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
